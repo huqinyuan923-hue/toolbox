@@ -89,13 +89,15 @@ const TOOL_NAMES = {
   units: "单位换算", base: "进制转换", encode: "编码转换",
   regex: "正则测试", diff: "文本对比", cron: "Cron 解析",
   uuid: "UUID 生成", hash: "哈希计算", textstats: "文本统计",
-  audio: "音乐解锁", daily: "每日一签",
+  audio: "音乐解锁", jwt: "JWT 解析", lorem: "占文生成",
+  contrast: "对比度检查", daily: "每日一签",
 };
 const tabs = $$('[role="tab"]');
 const inited = {
   json: true, timestamp: true, daily: true, color: true, units: true,
   base: true, encode: true, regex: true, diff: true, cron: true,
   uuid: true, hash: true, textstats: true, audio: true,
+  jwt: true, lorem: true, contrast: true,
 }; // 懒初始化标记（仅重依赖库的 markdown / qrcode 需要懒加载）
 
 function selectTool(name, focusTab = false) {
@@ -1155,6 +1157,156 @@ async function handleAudioFiles(files) {
     }
   }
 }
+
+/* ================= JWT 解析 ================= */
+const jwtInput = $("#jwtInput"), jwtHeader = $("#jwtHeader"),
+  jwtPayload = $("#jwtPayload"), jwtTimes = $("#jwtTimes"), jwtMsg = $("#jwtMsg");
+
+function b64urlDecode(s) {
+  const norm = s.replace(/-/g, "+").replace(/_/g, "/");
+  const bin = atob(norm + "=".repeat((4 - (norm.length % 4)) % 4));
+  return new TextDecoder().decode(Uint8Array.from(bin, (c) => c.charCodeAt(0)));
+}
+function prettyJson(obj) {
+  return JSON.stringify(obj, null, 2);
+}
+function renderJwt() {
+  jwtHeader.textContent = "";
+  jwtPayload.textContent = "";
+  jwtTimes.replaceChildren();
+  const token = jwtInput.value.trim();
+  if (!token) { setMsg(jwtMsg, ""); return; }
+  const parts = token.split(".");
+  if (parts.length < 2) { setMsg(jwtMsg, "✗ JWT 应至少包含两段（header.payload）", "err"); return; }
+  try {
+    const header = JSON.parse(b64urlDecode(parts[0]));
+    const payload = JSON.parse(b64urlDecode(parts[1]));
+    jwtHeader.textContent = prettyJson(header);
+    jwtPayload.textContent = prettyJson(payload);
+    const claims = [
+      ["exp 过期时间", payload.exp, "过期于"],
+      ["iat 签发时间", payload.iat, "签发于"],
+      ["nbf 生效时间", payload.nbf, "生效于"],
+    ];
+    for (const [name, value, verb] of claims) {
+      if (typeof value !== "number") continue;
+      const d = new Date(value * 1000);
+      const row = document.createElement("p");
+      row.className = "jwt-time";
+      const expired = name.startsWith("exp") && d.getTime() < Date.now();
+      row.innerHTML = "";
+      const label = document.createElement("span");
+      label.textContent = `${name}：${d.toLocaleString("zh-CN", { hour12: false })}`;
+      row.append(label);
+      if (name.startsWith("exp")) {
+        const badge = document.createElement("span");
+        badge.className = "badge " + (expired ? "fail" : "pass");
+        badge.style.marginLeft = "8px";
+        badge.textContent = expired ? "已过期" : "未过期";
+        row.append(badge);
+      }
+      jwtTimes.append(row);
+    }
+    setMsg(jwtMsg, "✓ 解码成功（未验证签名）", "ok");
+  } catch (e) {
+    setMsg(jwtMsg, "✗ 解码失败：" + (e.message || "不是合法的 Base64URL / JSON"), "err");
+  }
+}
+jwtInput.addEventListener("input", renderJwt);
+renderJwt();
+
+/* ================= 中文占文生成 ================= */
+const loremOut = $("#loremOut");
+const LOREM_WORDS = ["春风","代码","星河","咖啡","窗外","思想","远方","键盘","黄昏","萤火",
+  "山川","书页","时光","旅人","灯塔","潮汐","梦境","岛屿","麦田","候鸟",
+  "篝火","信笺","晚风","街灯","站台","折痕","投影","字节","维度","边界"];
+const LOREM_VERBS = ["掠过","穿过","点亮","抵达","唤醒","缠绕","铺开","收集","守着","落下",
+  "变成","记录","覆盖","丈量","折叠","照进","滑向","击中","拼出","数着"];
+function loremSentence() {
+  const len = 2 + Math.floor(Math.random() * 3);
+  const parts = [];
+  for (let i = 0; i < len; i++) {
+    parts.push(
+      LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)] +
+      LOREM_VERBS[Math.floor(Math.random() * LOREM_VERBS.length)] +
+      LOREM_WORDS[Math.floor(Math.random() * LOREM_WORDS.length)]
+    );
+  }
+  return parts.join("，");
+}
+function loremParagraph() {
+  const sentences = 3 + Math.floor(Math.random() * 4);
+  const out = [];
+  for (let i = 0; i < sentences; i++) out.push(loremSentence());
+  return out.join("。") + "。";
+}
+function generateLorem() {
+  const n = Math.min(Math.max(Number($("#loremCount").value) || 1, 1), 20);
+  const paras = [];
+  for (let i = 0; i < n; i++) paras.push(loremParagraph());
+  loremOut.value = paras.join("\n\n");
+}
+$("#loremGen").addEventListener("click", generateLorem);
+bindCopyBtn($("#loremCopy"), () => loremOut.value);
+generateLorem();
+
+/* ================= 对比度检查器 ================= */
+const ctFg = $("#ctFg"), ctBg = $("#ctBg"),
+  ctFgHex = $("#ctFgHex"), ctBgHex = $("#ctBgHex"),
+  ctRatio = $("#ctRatio"), ctLevels = $("#ctLevels"), ctPreview = $("#ctPreview");
+
+function relLuminance(hex) {
+  const rgb = hexToRgb(hex);
+  if (!rgb) return null;
+  const lin = [rgb.r, rgb.g, rgb.b].map((v) => {
+    const c = v / 255;
+    return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4);
+  });
+  return 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2];
+}
+function contrastRatio(fgHex, bgHex) {
+  const l1 = relLuminance(fgHex), l2 = relLuminance(bgHex);
+  if (l1 === null || l2 === null) return null;
+  const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
+  return (hi + 0.05) / (lo + 0.05);
+}
+function renderContrast() {
+  const fg = ctFgHex.value.trim(), bg = ctBgHex.value.trim();
+  if (!hexToRgb(fg) || !hexToRgb(bg)) { ctRatio.textContent = "颜色格式：#RGB 或 #RRGGBB"; ctRatio.className = "msg err"; return; }
+  const ratio = contrastRatio(fg, bg);
+  ctRatio.className = "msg ok";
+  ctRatio.textContent = `对比度 ${ratio.toFixed(2)} : 1`;
+  ctPreview.style.color = fg;
+  ctPreview.style.background = bg;
+  const checks = [
+    ["正文 AA（≥ 4.5）", ratio >= 4.5],
+    ["正文 AAA（≥ 7）", ratio >= 7],
+    ["大字 AA（≥ 3）", ratio >= 3],
+    ["大字 AAA（≥ 4.5）", ratio >= 4.5],
+    ["UI 组件 / 图形（≥ 3）", ratio >= 3],
+  ];
+  ctLevels.replaceChildren();
+  for (const [label, pass] of checks) {
+    const row = document.createElement("div");
+    row.className = "ct-level";
+    const badge = document.createElement("span");
+    badge.className = "badge " + (pass ? "pass" : "fail");
+    badge.textContent = pass ? "通过" : "未过";
+    const name = document.createElement("span");
+    name.textContent = label;
+    row.append(badge, name);
+    ctLevels.append(row);
+  }
+}
+ctFg.addEventListener("input", () => { ctFgHex.value = ctFg.value; renderContrast(); });
+ctBg.addEventListener("input", () => { ctBgHex.value = ctBg.value; renderContrast(); });
+ctFgHex.addEventListener("input", () => {
+  if (hexToRgb(ctFgHex.value)) { ctFg.value = ctFgHex.value; renderContrast(); }
+});
+ctBgHex.addEventListener("input", () => {
+  if (hexToRgb(ctBgHex.value)) { ctBg.value = ctBgHex.value; renderContrast(); }
+});
+renderContrast();
 
 /* ================= Service Worker（离线缓存） ================= */
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "127.0.0.1")) {

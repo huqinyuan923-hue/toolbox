@@ -52,6 +52,9 @@
         <button class="tool-btn" role="tab" id="tab-hash" aria-controls="tool-hash" aria-selected="false" data-tool="hash" tabindex="-1">哈希计算</button>
         <button class="tool-btn" role="tab" id="tab-textstats" aria-controls="tool-textstats" aria-selected="false" data-tool="textstats" tabindex="-1">文本统计</button>
         <button class="tool-btn" role="tab" id="tab-audio" aria-controls="tool-audio" aria-selected="false" data-tool="audio" tabindex="-1">音乐解锁</button>
+        <button class="tool-btn" role="tab" id="tab-jwt" aria-controls="tool-jwt" aria-selected="false" data-tool="jwt" tabindex="-1">JWT 解析</button>
+        <button class="tool-btn" role="tab" id="tab-lorem" aria-controls="tool-lorem" aria-selected="false" data-tool="lorem" tabindex="-1">占文生成</button>
+        <button class="tool-btn" role="tab" id="tab-contrast" aria-controls="tool-contrast" aria-selected="false" data-tool="contrast" tabindex="-1">对比度检查</button>
         <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">每日一签</button>
       </nav>
       <button id="themeToggle" class="icon-btn" title="切换深浅色（跟随系统初始化）" aria-label="切换深浅色主题">🌙</button>
@@ -377,6 +380,60 @@
       </div>
       <p id="audioMsg" class="msg" role="status" aria-live="polite"></p>
       <div id="audioResults"></div>
+    </section>
+
+    <!-- JWT 解析 -->
+    <section id="tool-jwt" class="tool-panel" role="tabpanel" aria-labelledby="tab-jwt" tabindex="0" hidden>
+      <h2>JWT 解析</h2>
+      <p class="hint">解码 Header 与 Payload（Base64URL）。⚠️ 仅做解码展示，<strong>不验证签名</strong>——内容可被任何人伪造，勿据此做安全判断。</p>
+      <textarea id="jwtInput" rows="4" spellcheck="false" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXIn0.eyJzdWIiOiIxMjM0NTY3ODkwIn0.x"></textarea>
+      <div class="grid-2">
+        <div class="card">
+          <h3>Header</h3>
+          <pre id="jwtHeader" class="jwt-pre"></pre>
+        </div>
+        <div class="card">
+          <h3>Payload</h3>
+          <pre id="jwtPayload" class="jwt-pre"></pre>
+          <div id="jwtTimes"></div>
+        </div>
+      </div>
+      <p id="jwtMsg" class="msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- 占文生成 -->
+    <section id="tool-lorem" class="tool-panel" role="tabpanel" aria-labelledby="tab-lorem" tabindex="0" hidden>
+      <h2>中文占文生成</h2>
+      <p class="hint">为排版和 UI 原型生成随机的中文占位文本。</p>
+      <div class="opt-row">
+        <label class="opt">段落数 <input id="loremCount" type="number" min="1" max="20" value="3" style="width:80px" /></label>
+        <button id="loremGen" class="btn primary">生成</button>
+      </div>
+      <textarea id="loremOut" rows="10" readonly spellcheck="false"></textarea>
+      <button id="loremCopy" class="btn">复制全部</button>
+    </section>
+
+    <!-- 对比度检查 -->
+    <section id="tool-contrast" class="tool-panel" role="tabpanel" aria-labelledby="tab-contrast" tabindex="0" hidden>
+      <h2>对比度检查器</h2>
+      <p class="hint">WCAG 2.x 前景/背景对比度与 AA / AAA 达标情况。</p>
+      <div class="grid-2">
+        <div class="card">
+          <div class="opt-row"><label class="opt">文字 <input id="ctFg" type="color" value="#1c2430" style="width:52px;height:36px;padding:2px" /></label>
+          <input id="ctFgHex" type="text" value="#1c2430" maxlength="7" style="width:100px" /></div>
+          <div class="opt-row"><label class="opt">背景 <input id="ctBg" type="color" value="#ffffff" style="width:52px;height:36px;padding:2px" /></label>
+          <input id="ctBgHex" type="text" value="#ffffff" maxlength="7" style="width:100px" /></div>
+          <p class="msg ok" id="ctRatio" style="font-size:1.3rem"></p>
+          <div id="ctLevels"></div>
+        </div>
+        <div class="card">
+          <div id="ctPreview" class="ct-preview">
+            <h3>预览标题 Preview</h3>
+            <p>正文文本：The quick brown fox jumps over the lazy dog. 快速的棕色狐狸跳过了懒惰的狗。</p>
+            <p><small>小号文本 0.85rem，用于检查小字达标情况。</small></p>
+          </div>
+        </div>
+      </div>
     </section>
 
     <!-- 每日一签 -->

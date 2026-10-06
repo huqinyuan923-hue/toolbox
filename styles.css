@@ -304,6 +304,22 @@ textarea:focus, input:focus, select:focus, .btn:focus-visible, .tool-btn:focus-v
 .audio-result .ar-name { flex: 1; word-break: break-all; }
 .audio-result .ar-size { color: var(--fg-muted); font-size: 0.82rem; white-space: nowrap; }
 
+.jwt-pre {
+  font-family: ui-monospace, Consolas, monospace; font-size: 0.82rem;
+  background: var(--accent-soft); border-radius: 8px; padding: 10px 12px;
+  overflow: auto; max-height: 260px; margin: 0 0 8px; white-space: pre-wrap; word-break: break-all;
+}
+.jwt-time { font-size: 0.86rem; margin: 4px 0; }
+.jwt-time .ok { color: var(--ok); }
+.jwt-time .bad { color: var(--danger); }
+
+.ct-preview { border-radius: var(--radius); padding: 18px 20px; border: 1px solid var(--border); transition: background 0.2s ease, color 0.2s ease; }
+.ct-preview h3 { margin-top: 0; }
+.ct-level { display: flex; gap: 8px; align-items: center; margin: 6px 0; font-size: 0.9rem; }
+.ct-level .badge { border-radius: 999px; padding: 1px 10px; font-size: 0.8rem; font-weight: 700; }
+.ct-level .pass { background: var(--ok); color: #0d1024; }
+.ct-level .fail { background: var(--danger); color: #fff; }
+
 @media (max-width: 640px) {
   .grid-2 { grid-template-columns: 1fr; }
   .swatches { flex-wrap: wrap; }
