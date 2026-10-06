@@ -1,0 +1,8 @@
+# OS / 编辑器
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+
+# Playwright MCP 截图缓存
+.playwright-mcp/

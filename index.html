@@ -3,73 +3,126 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="开发者工具箱 — 一组免费、无需登录、纯前端运行的日常小工具" />
+  <meta name="description" content="开发者工具箱 — JSON 格式化、时间戳转换、二维码生成、密码生成、Markdown 预览、每日一签。纯前端运行、无需登录、数据不上传。" />
+  <meta name="keywords" content="工具箱,JSON格式化,时间戳转换,二维码生成,密码生成器,Markdown预览,开发者工具" />
+  <meta name="robots" content="index,follow" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f6f7f9" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#10151c" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="工具箱" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="开发者工具箱 · Toolbox" />
+  <meta property="og:description" content="纯前端的日常小工具集：JSON 格式化、时间戳、二维码、密码生成、Markdown 预览、每日一签。数据不上传，可离线使用。" />
+  <meta property="og:url" content="https://huqinyuan923-hue.github.io/toolbox/" />
+  <meta property="og:locale" content="zh_CN" />
+  <meta name="twitter:card" content="summary" />
+
+  <link rel="canonical" href="https://huqinyuan923-hue.github.io/toolbox/" />
+  <link rel="icon" href="icon.svg" type="image/svg+xml" />
+  <link rel="manifest" href="manifest.json" />
+
   <title>开发者工具箱 · Toolbox</title>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔧</text></svg>" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="preconnect" href="https://picsum.photos" />
+  <link rel="dns-prefetch" href="https://fastly.picsum.photos" />
 </head>
 <body>
-  <header class="site-header">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+
+  <header class="site-header" id="siteHeader">
     <div class="wrap header-inner">
       <a class="brand" href="./">🔧 开发者工具箱</a>
-      <nav class="tool-nav" aria-label="工具导航">
-        <button class="tool-btn active" data-tool="json">JSON 格式化</button>
-        <button class="tool-btn" data-tool="timestamp">时间戳</button>
-        <button class="tool-btn" data-tool="qrcode">二维码</button>
-        <button class="tool-btn" data-tool="password">密码生成</button>
-        <button class="tool-btn" data-tool="markdown">Markdown</button>
-        <button class="tool-btn" data-tool="daily">每日一签</button>
+      <nav class="tool-nav" aria-label="工具导航" role="tablist">
+        <button class="tool-btn" role="tab" id="tab-json" aria-controls="tool-json" aria-selected="true" data-tool="json">JSON 格式化</button>
+        <button class="tool-btn" role="tab" id="tab-timestamp" aria-controls="tool-timestamp" aria-selected="false" data-tool="timestamp" tabindex="-1">时间戳</button>
+        <button class="tool-btn" role="tab" id="tab-qrcode" aria-controls="tool-qrcode" aria-selected="false" data-tool="qrcode" tabindex="-1">二维码</button>
+        <button class="tool-btn" role="tab" id="tab-password" aria-controls="tool-password" aria-selected="false" data-tool="password" tabindex="-1">密码生成</button>
+        <button class="tool-btn" role="tab" id="tab-markdown" aria-controls="tool-markdown" aria-selected="false" data-tool="markdown" tabindex="-1">Markdown</button>
+        <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">每日一签</button>
       </nav>
-      <button id="themeToggle" class="icon-btn" title="切换深浅色" aria-label="切换深浅色">🌙</button>
+      <button id="themeToggle" class="icon-btn" title="切换深浅色（跟随系统初始化）" aria-label="切换深浅色主题">🌙</button>
     </div>
   </header>
 
-  <main class="wrap">
+  <noscript>
+    <p class="noscript-tip">⚠️ 本站所有工具都在浏览器里用 JavaScript 运行，请启用 JavaScript 后再使用。</p>
+  </noscript>
+
+  <main class="wrap" id="main">
     <!-- JSON 格式化 -->
-    <section id="tool-json" class="tool-panel active" aria-label="JSON 格式化">
+    <section id="tool-json" class="tool-panel active" role="tabpanel" aria-labelledby="tab-json" tabindex="0">
       <h2>JSON 格式化 / 压缩</h2>
-      <p class="hint">粘贴 JSON，点击按钮格式化（带缩进）或压缩成一行。数据不会离开你的浏览器。</p>
-      <textarea id="jsonInput" rows="9" placeholder='{"name":"Toolbox","stars":100}' spellcheck="false"></textarea>
+      <p class="hint">粘贴 JSON，点击按钮或按 <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 格式化。数据不会离开你的浏览器。</p>
+      <textarea id="jsonInput" rows="9" placeholder='{"name":"Toolbox","stars":100}' spellcheck="false" aria-label="JSON 输入"></textarea>
       <div class="btn-row">
         <button id="jsonFormat" class="btn primary">格式化</button>
         <button id="jsonMinify" class="btn">压缩</button>
+        <button id="jsonSort" class="btn">排序键</button>
         <button id="jsonCopy" class="btn">复制结果</button>
+        <button id="jsonSample" class="btn ghost">示例</button>
         <button id="jsonClear" class="btn ghost">清空</button>
       </div>
-      <p id="jsonMsg" class="msg" role="status"></p>
+      <p id="jsonMsg" class="msg" role="status" aria-live="polite"></p>
     </section>
 
     <!-- 时间戳 -->
-    <section id="tool-timestamp" class="tool-panel" aria-label="时间戳转换">
+    <section id="tool-timestamp" class="tool-panel" role="tabpanel" aria-labelledby="tab-timestamp" tabindex="0" hidden>
       <h2>时间戳转换</h2>
-      <p class="hint">当前时间戳：<code id="tsNow">—</code>（每秒刷新）</p>
+      <p class="hint">当前时间戳：<code id="tsNow">—</code>
+        <button id="tsCopyNow" class="btn mini">复制</button>（每秒刷新）</p>
       <div class="grid-2">
         <div class="card">
           <h3>时间戳 → 日期</h3>
-          <input id="tsInput" type="text" inputmode="numeric" placeholder="例如 1759700000 或毫秒" />
-          <button id="tsToDate" class="btn primary">转换</button>
-          <p id="tsOut" class="msg"></p>
+          <input id="tsInput" type="text" inputmode="numeric" placeholder="例如 1759700000（秒）或毫秒" aria-label="时间戳输入" />
+          <div class="btn-row">
+            <button id="tsToDate" class="btn primary">转换</button>
+          </div>
+          <p id="tsOut" class="msg" role="status" aria-live="polite"></p>
         </div>
         <div class="card">
           <h3>日期 → 时间戳</h3>
-          <input id="dateInput" type="datetime-local" />
-          <button id="dateToTs" class="btn primary">转换</button>
-          <p id="dateOut" class="msg"></p>
+          <input id="dateInput" type="datetime-local" aria-label="日期时间选择" />
+          <div class="btn-row">
+            <button id="dateToTs" class="btn primary">转换</button>
+            <button id="dateNow" class="btn ghost">填入现在</button>
+          </div>
+          <p id="dateOut" class="msg" role="status" aria-live="polite"></p>
         </div>
       </div>
     </section>
 
     <!-- 二维码 -->
-    <section id="tool-qrcode" class="tool-panel" aria-label="二维码生成">
+    <section id="tool-qrcode" class="tool-panel" role="tabpanel" aria-labelledby="tab-qrcode" tabindex="0" hidden>
       <h2>二维码生成</h2>
-      <p class="hint">输入文字或链接，生成可下载的二维码图片。</p>
+      <p class="hint">输入文字或链接，生成可下载的二维码图片。内容过长时会自动降低容错率提示。</p>
       <div class="grid-2">
         <div>
-          <textarea id="qrInput" rows="4" placeholder="https://example.com"></textarea>
+          <textarea id="qrInput" rows="4" maxlength="2000" placeholder="https://example.com" aria-label="二维码内容"></textarea>
+          <div class="opt-row">
+            <label class="opt">容错
+              <select id="qrEcc">
+                <option value="L">L — 内容最多</option>
+                <option value="M" selected>M — 推荐</option>
+                <option value="Q">Q</option>
+                <option value="H">H — 最抗遮挡</option>
+              </select>
+            </label>
+            <label class="opt">大小
+              <select id="qrCell">
+                <option value="6">小</option>
+                <option value="8" selected>中</option>
+                <option value="12">大</option>
+              </select>
+            </label>
+          </div>
           <div class="btn-row">
             <button id="qrGen" class="btn primary">生成</button>
             <button id="qrDownload" class="btn">下载 PNG</button>
           </div>
+          <p id="qrMsg" class="msg" role="status" aria-live="polite"></p>
         </div>
         <div class="qr-box">
           <canvas id="qrCanvas" width="220" height="220" aria-label="二维码预览"></canvas>
@@ -78,51 +131,70 @@
     </section>
 
     <!-- 密码生成 -->
-    <section id="tool-password" class="tool-panel" aria-label="密码生成">
+    <section id="tool-password" class="tool-panel" role="tabpanel" aria-labelledby="tab-password" tabindex="0" hidden>
       <h2>密码生成</h2>
-      <p class="hint">使用浏览器密码学接口（crypto.getRandomValues）在本地生成强密码。</p>
+      <p class="hint">使用浏览器密码学接口（crypto.getRandomValues）在本地生成强密码，设置会自动记住。</p>
       <div class="card">
         <div class="pw-row">
-          <output id="pwOut" class="pw-display">—</output>
+          <output id="pwOut" class="pw-display" aria-live="polite">—</output>
           <button id="pwCopy" class="btn">复制</button>
         </div>
+        <div class="pw-strength" aria-label="密码强度">
+          <div class="pw-strength-bar"><i id="pwStrengthFill"></i></div>
+          <span id="pwStrengthText">—</span>
+        </div>
         <label class="opt">长度
-          <input id="pwLen" type="range" min="6" max="64" value="16" />
+          <input id="pwLen" type="range" min="6" max="64" value="16" aria-label="密码长度" />
           <span id="pwLenVal">16</span>
         </label>
         <div class="opt-group">
-          <label class="opt"><input type="checkbox" id="pwUpper" checked /> 大写字母 A-Z</label>
-          <label class="opt"><input type="checkbox" id="pwLower" checked /> 小写字母 a-z</label>
+          <label class="opt"><input type="checkbox" id="pwUpper" checked /> 大写 A-Z</label>
+          <label class="opt"><input type="checkbox" id="pwLower" checked /> 小写 a-z</label>
           <label class="opt"><input type="checkbox" id="pwDigit" checked /> 数字 0-9</label>
           <label class="opt"><input type="checkbox" id="pwSymbol" checked /> 符号 !@#$%</label>
+          <label class="opt"><input type="checkbox" id="pwNoAmbiguous" /> 排除易混淆 (l I 1 O 0)</label>
         </div>
         <button id="pwGen" class="btn primary">重新生成</button>
       </div>
     </section>
 
     <!-- Markdown 预览 -->
-    <section id="tool-markdown" class="tool-panel" aria-label="Markdown 预览">
+    <section id="tool-markdown" class="tool-panel" role="tabpanel" aria-labelledby="tab-markdown" tabindex="0" hidden>
       <h2>Markdown 实时预览</h2>
-      <p class="hint">左边写 Markdown，右边实时看效果。</p>
+      <p class="hint">左边写 Markdown，右边实时看效果。草稿自动保存在本地。</p>
+      <div class="md-toolbar" role="toolbar" aria-label="Markdown 快捷插入">
+        <button class="btn mini" data-md-wrap="## " data-md-head>标题</button>
+        <button class="btn mini" data-md-wrap="**">粗体</button>
+        <button class="btn mini" data-md-wrap="*">斜体</button>
+        <button class="btn mini" data-md-wrap="`">行内代码</button>
+        <button class="btn mini" data-md-wrap="```\n" data-md-suffix="\n```">代码块</button>
+        <button class="btn mini" data-md-line="- ">列表</button>
+        <button class="btn mini" data-md-line="> ">引用</button>
+        <button class="btn mini" data-md-link>链接</button>
+        <span class="md-count" id="mdCount"></span>
+      </div>
       <div class="md-grid">
-        <textarea id="mdInput" spellcheck="false" placeholder="# 标题&#10;&#10;- 列表项&#10;&#10;**加粗** 与 `代码`"></textarea>
-        <div id="mdPreview" class="md-preview"></div>
+        <textarea id="mdInput" spellcheck="false" placeholder="正在加载渲染库…" aria-label="Markdown 源文"></textarea>
+        <div id="mdPreview" class="md-preview" aria-live="polite"></div>
+      </div>
+      <div class="btn-row">
+        <button id="mdClear" class="btn ghost">清空草稿</button>
       </div>
     </section>
 
     <!-- 每日一签 -->
-    <section id="tool-daily" class="tool-panel" aria-label="每日一签">
+    <section id="tool-daily" class="tool-panel" role="tabpanel" aria-labelledby="tab-daily" tabindex="0" hidden>
       <h2>每日一签</h2>
       <p class="hint">按当天日期确定性挑选，所有人同一天看到同一句话。</p>
-      <div class="daily-card">
-        <img id="dailyImg" alt="每日配图" loading="lazy" />
+      <div class="daily-card" id="dailyCard">
+        <img id="dailyImg" alt="每日配图" loading="lazy" decoding="async" width="1200" height="500" />
         <div class="daily-body">
           <p class="daily-date" id="dailyDate">—</p>
           <blockquote id="dailyQuote">—</blockquote>
           <p class="daily-author" id="dailyAuthor">—</p>
           <div class="btn-row">
             <button id="dailyCopy" class="btn">复制今日句子</button>
-            <a id="dailyWallLink" class="btn ghost" href="#" target="_blank" rel="noopener">查看原图</a>
+            <a id="dailyWallLink" class="btn ghost" href="#" target="_blank" rel="noopener noreferrer">查看原图</a>
           </div>
         </div>
       </div>
@@ -130,16 +202,17 @@
   </main>
 
   <footer class="site-footer">
-    <div class="wrap">
-      <p>纯前端运行 · 无需登录 · 数据不上传 ·
-        <a href="https://github.com/huqinyuan923-hue/toolbox" target="_blank" rel="noopener">GitHub 开源</a>
+    <div class="wrap footer-grid">
+      <p>纯前端运行 · 无需登录 · 数据不上传 · 可离线使用</p>
+      <p>
+        <a href="https://github.com/huqinyuan923-hue/toolbox" target="_blank" rel="noopener noreferrer">GitHub 开源</a>
+        · <a href="https://github.com/huqinyuan923-hue" target="_blank" rel="noopener noreferrer">我的主页</a>
+        · <a href="https://huqinyuan923-hue.github.io" target="_blank" rel="noopener noreferrer">博客</a>
+        · 快捷键 <kbd>Alt</kbd>+<kbd>1~6</kbd> 切换工具
       </p>
     </div>
   </footer>
 
-  <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
   <script src="script.js"></script>
 </body>
 </html>

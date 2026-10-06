@@ -1,0 +1,25 @@
+{
+  "name": "开发者工具箱 · Toolbox",
+  "short_name": "工具箱",
+  "description": "纯前端的日常小工具集：JSON 格式化、时间戳、二维码、密码生成、Markdown 预览、每日一签。",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f7f9",
+  "theme_color": "#2563eb",
+  "lang": "zh-CN",
+  "icons": [
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
