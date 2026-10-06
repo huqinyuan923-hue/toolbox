@@ -245,3 +245,51 @@ textarea:focus, input:focus, select:focus, .btn:focus-visible, .tool-btn:focus-v
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- 新工具 ---------- */
+.kv {
+  display: flex; align-items: center; gap: 10px;
+  background: var(--accent-soft); border-radius: 10px;
+  padding: 7px 12px; margin-bottom: 7px;
+}
+.kv > span { width: 3em; color: var(--fg-muted); font-size: 0.88rem; flex: none; }
+.kv code { flex: 1; background: transparent; padding: 0; word-break: break-all; }
+
+.swatches { display: flex; gap: 8px; }
+.swatch { flex: 1; text-align: center; cursor: pointer; }
+.swatch .block {
+  height: 52px; border-radius: 10px; border: 1px solid var(--border);
+  margin-bottom: 6px; transition: transform 0.12s ease;
+}
+.swatch:hover .block { transform: scale(1.05); }
+.swatch small { color: var(--fg-muted); font-size: 0.7rem; }
+
+.add-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.add-row input[type="text"], .add-row input:not([type]) { flex: 1; min-width: 120px; margin-bottom: 0; }
+
+.diff-view {
+  font-family: ui-monospace, Consolas, monospace; font-size: 0.85rem;
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 8px 0; margin-top: 10px;
+  max-height: 420px; overflow: auto; min-height: 60px;
+}
+.diff-line { padding: 1px 14px; white-space: pre-wrap; word-break: break-all; }
+.diff-line::before { display: inline-block; width: 1.2em; color: var(--fg-muted); }
+.diff-line.add { background: rgb(122 240 200 / 0.12); }
+.diff-line.add::before { content: "+ "; color: var(--ok); }
+.diff-line.del { background: rgb(255 123 142 / 0.12); }
+.diff-line.del::before { content: "- "; color: var(--danger); }
+
+.hl { background: var(--accent); color: #fff; border-radius: 3px; padding: 0 2px; }
+.re-group { margin-top: 10px; font-size: 0.86rem; color: var(--fg-muted); }
+.re-group code { background: var(--accent-soft); }
+
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-top: 12px; }
+.stat-box { background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 12px 14px; }
+.stat-box b { display: block; font-size: 1.35rem; }
+.stat-box span { color: var(--fg-muted); font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .swatches { flex-wrap: wrap; }
+}

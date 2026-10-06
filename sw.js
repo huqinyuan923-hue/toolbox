@@ -1,7 +1,7 @@
 /* Toolbox 离线缓存 Service Worker
  * 同源资源：缓存优先；CDN/图片：网络优先、断网回退缓存。
  * 改动静态资源后请递增 CACHE 版本号。 */
-const CACHE = "toolbox-v2";
+const CACHE = "toolbox-v3";
 const CORE = ["./", "./index.html", "./styles.css", "./script.js", "./manifest.json", "./icon.svg"];
 
 self.addEventListener("install", (e) => {

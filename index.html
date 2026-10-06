@@ -41,6 +41,16 @@
         <button class="tool-btn" role="tab" id="tab-qrcode" aria-controls="tool-qrcode" aria-selected="false" data-tool="qrcode" tabindex="-1">二维码</button>
         <button class="tool-btn" role="tab" id="tab-password" aria-controls="tool-password" aria-selected="false" data-tool="password" tabindex="-1">密码生成</button>
         <button class="tool-btn" role="tab" id="tab-markdown" aria-controls="tool-markdown" aria-selected="false" data-tool="markdown" tabindex="-1">Markdown</button>
+        <button class="tool-btn" role="tab" id="tab-color" aria-controls="tool-color" aria-selected="false" data-tool="color" tabindex="-1">颜色工具</button>
+        <button class="tool-btn" role="tab" id="tab-units" aria-controls="tool-units" aria-selected="false" data-tool="units" tabindex="-1">单位换算</button>
+        <button class="tool-btn" role="tab" id="tab-base" aria-controls="tool-base" aria-selected="false" data-tool="base" tabindex="-1">进制转换</button>
+        <button class="tool-btn" role="tab" id="tab-encode" aria-controls="tool-encode" aria-selected="false" data-tool="encode" tabindex="-1">编码转换</button>
+        <button class="tool-btn" role="tab" id="tab-regex" aria-controls="tool-regex" aria-selected="false" data-tool="regex" tabindex="-1">正则测试</button>
+        <button class="tool-btn" role="tab" id="tab-diff" aria-controls="tool-diff" aria-selected="false" data-tool="diff" tabindex="-1">文本对比</button>
+        <button class="tool-btn" role="tab" id="tab-cron" aria-controls="tool-cron" aria-selected="false" data-tool="cron" tabindex="-1">Cron 解析</button>
+        <button class="tool-btn" role="tab" id="tab-uuid" aria-controls="tool-uuid" aria-selected="false" data-tool="uuid" tabindex="-1">UUID 生成</button>
+        <button class="tool-btn" role="tab" id="tab-hash" aria-controls="tool-hash" aria-selected="false" data-tool="hash" tabindex="-1">哈希计算</button>
+        <button class="tool-btn" role="tab" id="tab-textstats" aria-controls="tool-textstats" aria-selected="false" data-tool="textstats" tabindex="-1">文本统计</button>
         <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">每日一签</button>
       </nav>
       <button id="themeToggle" class="icon-btn" title="切换深浅色（跟随系统初始化）" aria-label="切换深浅色主题">🌙</button>
@@ -182,6 +192,174 @@
       </div>
     </section>
 
+    <!-- 颜色工具 -->
+    <section id="tool-color" class="tool-panel" role="tabpanel" aria-labelledby="tab-color" tabindex="0" hidden>
+      <h2>颜色工具</h2>
+      <p class="hint">HEX / RGB / HSL 互转，并生成明暗色阶。点击色块复制。</p>
+      <div class="grid-2">
+        <div class="card">
+          <div class="opt-row">
+            <label class="opt">选色 <input id="colorPick" type="color" value="#2563eb" style="width:52px;height:38px;padding:2px" /></label>
+            <input id="colorHex" type="text" value="#2563eb" maxlength="7" style="flex:1" aria-label="HEX 颜色" />
+          </div>
+          <div class="kv"><span>HEX</span><code id="cHex">#2563eb</code><button class="btn mini" data-copy-target="cHex">复制</button></div>
+          <div class="kv"><span>RGB</span><code id="cRgb">rgb(37, 99, 235)</code><button class="btn mini" data-copy-target="cRgb">复制</button></div>
+          <div class="kv"><span>HSL</span><code id="cHsl">hsl(217, 83%, 53%)</code><button class="btn mini" data-copy-target="cHsl">复制</button></div>
+        </div>
+        <div class="card">
+          <h3>色阶（点击复制）</h3>
+          <div class="swatches" id="colorShades"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 单位换算 -->
+    <section id="tool-units" class="tool-panel" role="tabpanel" aria-labelledby="tab-units" tabindex="0" hidden>
+      <h2>单位换算</h2>
+      <p class="hint">长度 / 重量 / 数据大小 / 温度。</p>
+      <div class="card">
+        <div class="opt-row">
+          <label class="opt">类别
+            <select id="unitCat">
+              <option value="length">长度</option>
+              <option value="weight">重量</option>
+              <option value="data">数据大小</option>
+              <option value="temp">温度</option>
+            </select>
+          </label>
+        </div>
+        <div class="add-row">
+          <input id="unitVal" type="text" inputmode="decimal" value="1" aria-label="数值" />
+          <select id="unitFrom" aria-label="原单位"></select>
+          <span class="muted">→</span>
+          <select id="unitTo" aria-label="目标单位"></select>
+        </div>
+        <p class="msg ok" id="unitOut" style="font-size:1.1rem"></p>
+      </div>
+    </section>
+
+    <!-- 进制转换 -->
+    <section id="tool-base" class="tool-panel" role="tabpanel" aria-labelledby="tab-base" tabindex="0" hidden>
+      <h2>进制转换</h2>
+      <p class="hint">输入整数，同时得到 2 / 8 / 10 / 16 / 36 进制表示。</p>
+      <div class="card">
+        <div class="opt-row">
+          <input id="baseInput" type="text" value="255" style="flex:1" aria-label="数值" />
+          <label class="opt">原始进制
+            <select id="baseFrom">
+              <option value="2">2</option><option value="8">8</option>
+              <option value="10" selected>10</option><option value="16">16</option><option value="36">36</option>
+            </select>
+          </label>
+        </div>
+        <div id="baseOut"></div>
+      </div>
+    </section>
+
+    <!-- 编码转换 -->
+    <section id="tool-encode" class="tool-panel" role="tabpanel" aria-labelledby="tab-encode" tabindex="0" hidden>
+      <h2>编码转换</h2>
+      <p class="hint">URL 编解码 / Base64（支持中文）/ Unicode 转义。</p>
+      <div class="opt-row">
+        <label class="opt">模式
+          <select id="encMode">
+            <option value="urlEnc">URL 编码</option>
+            <option value="urlDec">URL 解码</option>
+            <option value="b64Enc">Base64 编码</option>
+            <option value="b64Dec">Base64 解码</option>
+            <option value="uniEnc">Unicode 转义</option>
+            <option value="uniDec">Unicode 还原</option>
+          </select>
+        </label>
+      </div>
+      <textarea id="encInput" rows="4" spellcheck="false" placeholder="输入内容"></textarea>
+      <button id="encRun" class="btn primary">转换</button>
+      <textarea id="encOutput" rows="4" spellcheck="false" readonly placeholder="结果"></textarea>
+      <div class="btn-row"><button class="btn" id="encCopy">复制结果</button></div>
+      <p id="encMsg" class="msg" role="status" aria-live="polite"></p>
+    </section>
+
+    <!-- 正则测试 -->
+    <section id="tool-regex" class="tool-panel" role="tabpanel" aria-labelledby="tab-regex" tabindex="0" hidden>
+      <h2>正则测试</h2>
+      <p class="hint">实时高亮匹配结果与捕获组。正则在浏览器本地执行。</p>
+      <div class="opt-row">
+        <input id="rePattern" type="text" value="\d+" style="flex:1; font-family:ui-monospace,monospace" placeholder="正则表达式，如 \d+" aria-label="正则表达式" />
+        <input id="reFlags" type="text" value="g" maxlength="6" style="width:70px" placeholder="flags" aria-label="正则标志" />
+      </div>
+      <textarea id="reText" rows="6" spellcheck="false" placeholder="测试文本">订单 A123 完成于 2026-01-15，订单 B456 完成于 2026-03-02</textarea>
+      <p id="reMsg" class="msg" role="status" aria-live="polite"></p>
+      <div id="rePreview" class="md-preview" style="height:auto; min-height:80px"></div>
+      <div id="reGroups" class="re-group"></div>
+    </section>
+
+    <!-- 文本对比 -->
+    <section id="tool-diff" class="tool-panel" role="tabpanel" aria-labelledby="tab-diff" tabindex="0" hidden>
+      <h2>文本对比</h2>
+      <p class="hint">逐行对比两段文本（各限 500 行），绿色为新增、红色为删除。</p>
+      <div class="md-grid">
+        <textarea id="diffA" rows="10" spellcheck="false" placeholder="原文">第一行
+第二行（被修改）
+第三行</textarea>
+        <textarea id="diffB" rows="10" spellcheck="false" placeholder="新文">第一行
+第二行（已修改）
+第三行
+新增的第四行</textarea>
+      </div>
+      <div class="btn-row"><button id="diffRun" class="btn primary">对比</button>
+        <span id="diffStat" class="muted small"></span></div>
+      <div id="diffView" class="diff-view"></div>
+    </section>
+
+    <!-- Cron 解析 -->
+    <section id="tool-cron" class="tool-panel" role="tabpanel" aria-labelledby="tab-cron" tabindex="0" hidden>
+      <h2>Cron 表达式解析</h2>
+      <p class="hint">标准 5 位格式（分 时 日 月 周），展示中文含义与未来 5 次执行时间。</p>
+      <input id="cronInput" type="text" value="0 9 * * 1-5" style="font-family:ui-monospace,monospace" aria-label="Cron 表达式" />
+      <div class="btn-row" id="cronExamples"></div>
+      <p id="cronDesc" class="msg ok"></p>
+      <div class="card">
+        <h3>未来 5 次执行（本地时区）</h3>
+        <div id="cronNext"></div>
+      </div>
+    </section>
+
+    <!-- UUID 生成 -->
+    <section id="tool-uuid" class="tool-panel" role="tabpanel" aria-labelledby="tab-uuid" tabindex="0" hidden>
+      <h2>UUID / 短 ID 生成</h2>
+      <p class="hint">基于 crypto API 的安全随机 ID，支持批量。</p>
+      <div class="card">
+        <div class="opt-row">
+          <label class="opt">类型
+            <select id="uuidType">
+              <option value="v4">UUID v4</option>
+              <option value="short">短 ID（12 位）</option>
+            </select>
+          </label>
+          <label class="opt">数量 <input id="uuidCount" type="number" min="1" max="100" value="5" style="width:80px" /></label>
+        </div>
+        <button id="uuidGen" class="btn primary">生成</button>
+        <textarea id="uuidOut" rows="7" readonly spellcheck="false" style="margin-top:10px"></textarea>
+        <button id="uuidCopy" class="btn">复制全部</button>
+      </div>
+    </section>
+
+    <!-- 哈希计算 -->
+    <section id="tool-hash" class="tool-panel" role="tabpanel" aria-labelledby="tab-hash" tabindex="0" hidden>
+      <h2>哈希计算</h2>
+      <p class="hint">使用浏览器原生 crypto 计算 SHA 系列哈希，本地完成。</p>
+      <textarea id="hashInput" rows="4" spellcheck="false" placeholder="输入要计算哈希的文本"></textarea>
+      <div id="hashOut"></div>
+    </section>
+
+    <!-- 文本统计 -->
+    <section id="tool-textstats" class="tool-panel" role="tabpanel" aria-labelledby="tab-textstats" tabindex="0" hidden>
+      <h2>文本统计</h2>
+      <p class="hint">字数、词数、行数、段落数与预计阅读时长。</p>
+      <textarea id="tsInput" rows="8" placeholder="粘贴或输入文本">你好，Toolbox！这是一个文本统计工具，支持中英文混排。</textarea>
+      <div class="stat-grid" id="tsStats"></div>
+    </section>
+
     <!-- 每日一签 -->
     <section id="tool-daily" class="tool-panel" role="tabpanel" aria-labelledby="tab-daily" tabindex="0" hidden>
       <h2>每日一签</h2>
@@ -208,7 +386,7 @@
         <a href="https://github.com/huqinyuan923-hue/toolbox" target="_blank" rel="noopener noreferrer">GitHub 开源</a>
         · <a href="https://github.com/huqinyuan923-hue" target="_blank" rel="noopener noreferrer">我的主页</a>
         · <a href="https://huqinyuan923-hue.github.io" target="_blank" rel="noopener noreferrer">博客</a>
-        · 快捷键 <kbd>Alt</kbd>+<kbd>1~6</kbd> 切换工具
+        · 快捷键 <kbd>Alt</kbd>+<kbd>数字</kbd> 切换工具
       </p>
     </div>
   </footer>
