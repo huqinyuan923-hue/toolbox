@@ -6,3 +6,6 @@ desktop.ini
 
 # Playwright MCP 截图缓存
 .playwright-mcp/
+
+# Mimosa 扫描器状态
+.mimosa/
