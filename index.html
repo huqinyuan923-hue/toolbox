@@ -51,6 +51,7 @@
         <button class="tool-btn" role="tab" id="tab-uuid" aria-controls="tool-uuid" aria-selected="false" data-tool="uuid" tabindex="-1">UUID 生成</button>
         <button class="tool-btn" role="tab" id="tab-hash" aria-controls="tool-hash" aria-selected="false" data-tool="hash" tabindex="-1">哈希计算</button>
         <button class="tool-btn" role="tab" id="tab-textstats" aria-controls="tool-textstats" aria-selected="false" data-tool="textstats" tabindex="-1">文本统计</button>
+        <button class="tool-btn" role="tab" id="tab-audio" aria-controls="tool-audio" aria-selected="false" data-tool="audio" tabindex="-1">音乐解锁</button>
         <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">每日一签</button>
       </nav>
       <button id="themeToggle" class="icon-btn" title="切换深浅色（跟随系统初始化）" aria-label="切换深浅色主题">🌙</button>
@@ -358,6 +359,24 @@
       <p class="hint">字数、词数、行数、段落数与预计阅读时长。</p>
       <textarea id="tsInput" rows="8" placeholder="粘贴或输入文本">你好，Toolbox！这是一个文本统计工具，支持中英文混排。</textarea>
       <div class="stat-grid" id="tsStats"></div>
+    </section>
+
+    <!-- 音乐解锁 -->
+    <section id="tool-audio" class="tool-panel" role="tabpanel" aria-labelledby="tab-audio" tabindex="0" hidden>
+      <h2>音乐解锁（酷狗 KGM → MP3/FLAC）</h2>
+      <p class="hint">
+        酷狗的 .kgm / .kgma / .vpr 是把原始音频加密封装的格式，本工具在浏览器本地无损还原为
+        MP3 / FLAC 等。<strong>仅限转换你合法获取的音乐文件供个人使用，请勿传播解密结果。</strong>
+        文件全程不离开浏览器。
+      </p>
+      <div id="audioDrop" class="drop-zone">
+        拖拽文件到此处，或
+        <button id="audioPickBtn" class="btn">选择文件</button>
+        <input id="audioPick" type="file" multiple accept=".kgm,.kgma,.vpr" hidden />
+        <p class="small">支持批量 · 单文件加密音频 ≤ 100MB · 需联网加载一次解密表（约 1.1MB）</p>
+      </div>
+      <p id="audioMsg" class="msg" role="status" aria-live="polite"></p>
+      <div id="audioResults"></div>
     </section>
 
     <!-- 每日一签 -->
