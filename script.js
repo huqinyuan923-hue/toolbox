@@ -116,10 +116,15 @@ function selectTool(name, focusTab = false) {
   });
   document.title = `${TOOL_NAMES[name]} · 开发者工具箱`;
   history.replaceState(null, "", "#" + name);
+  localStorage.setItem("toolbox-last", name); // 记住上次使用的工具
   if (!inited[name]) {
     inited[name] = true;
     if (name === "markdown") initMarkdown();
     if (name === "qrcode") drawQrPlaceholder();
+  }
+  if (focusTab) {
+    const panel = $("#tool-" + name);
+    if (panel) panel.focus({ preventScroll: false });
   }
 }
 
@@ -147,7 +152,27 @@ window.addEventListener("hashchange", () => {
   const name = location.hash.slice(1);
   if (name) selectTool(name);
 });
-selectTool(location.hash.slice(1) || "json");
+// 恢复上次使用的工具（hash 优先）
+const lastTool = localStorage.getItem("toolbox-last");
+selectTool(location.hash.slice(1) || (TOOL_NAMES[lastTool] ? lastTool : "json"));
+
+/* 工具搜索：过滤标签，Enter 跳到第一个匹配 */
+const toolSearch = $("#toolSearch");
+toolSearch.addEventListener("input", () => {
+  const kw = toolSearch.value.trim().toLowerCase();
+  let first = null;
+  tabs.forEach((tab) => {
+    const hit = !kw || TOOL_NAMES[tab.dataset.tool].toLowerCase().includes(kw)
+      || tab.dataset.tool.includes(kw);
+    tab.classList.toggle("nav-hidden", !hit);
+    if (hit && !first) first = tab;
+  });
+  $$(".nav-sep").forEach((s) => { s.style.display = kw ? "none" : ""; });
+  if (kw && first) first.click();
+});
+toolSearch.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { toolSearch.value = ""; toolSearch.dispatchEvent(new Event("input")); toolSearch.blur(); }
+});
 
 /* 顶栏滚动阴影 */
 addEventListener("scroll", () => {
@@ -303,9 +328,11 @@ $("#qrGen").addEventListener("click", async () => {
     const size = count * cell + margin * 2;
     qrCanvas.width = qrCanvas.height = size;
     const ctx = qrCanvas.getContext("2d");
-    ctx.fillStyle = "#fff";
+    const fgColor = $("#qrFg").value || "#000";
+    const bgColor = $("#qrBg").value || "#fff";
+    ctx.fillStyle = bgColor;
     ctx.fillRect(0, 0, size, size);
-    ctx.fillStyle = "#000";
+    ctx.fillStyle = fgColor;
     for (let r = 0; r < count; r++)
       for (let c = 0; c < count; c++)
         if (qr.isDark(r, c)) ctx.fillRect(margin + c * cell, margin + r * cell, cell, cell);
@@ -386,6 +413,33 @@ function generatePassword() {
   }
   pwOut.textContent = chars.join("");
   updateStrength(len, all.length);
+  pushPwHistory(pwOut.textContent);
+}
+
+/* 最近 5 条生成历史，点击可复制 */
+const pwHistoryList = [];
+function pushPwHistory(pw) {
+  pwHistoryList.unshift(pw);
+  if (pwHistoryList.length > 5) pwHistoryList.pop();
+  const box = $("#pwHistory");
+  box.replaceChildren();
+  if (pwHistoryList.length < 2) return;
+  const title = document.createElement("div");
+  title.className = "muted small";
+  title.textContent = "最近生成（点击复制）：";
+  box.append(title);
+  pwHistoryList.slice(1).forEach((pw) => {
+    const row = document.createElement("div");
+    row.className = "pw-hist-row";
+    row.title = "点击复制";
+    const code = document.createElement("code");
+    code.textContent = pw;
+    row.append(code);
+    row.addEventListener("click", async () => {
+      if (await copyText(pw)) { row.style.color = "var(--ok)"; setTimeout(() => { row.style.color = ""; }, 800); }
+    });
+    box.append(row);
+  });
 }
 pwLen.addEventListener("input", () => { pwLenVal.textContent = pwLen.value; savePwOpts(); generatePassword(); });
 $$('.opt input[type="checkbox"]').forEach((cb) =>
@@ -446,6 +500,11 @@ function initMarkdown() {
     localStorage.removeItem(MD_DRAFT_KEY);
     mdInput.value = "";
     renderMd();
+  });
+  // 左右滚动同步（按比例）
+  mdInput.addEventListener("scroll", () => {
+    const r = mdInput.scrollTop / Math.max(1, mdInput.scrollHeight - mdInput.clientHeight);
+    mdPreview.scrollTop = r * (mdPreview.scrollHeight - mdPreview.clientHeight);
   });
   // 工具栏：包裹选中文本 / 行首插入 / 插入链接
   $$(".md-toolbar [data-md-wrap], .md-toolbar [data-md-line], .md-toolbar [data-md-link]").forEach((btn) =>
@@ -613,7 +672,10 @@ renderColor("#2563eb");
 const UNIT_TABLE = {
   length: { label: "长度", base: "m", units: { mm: 0.001, cm: 0.01, m: 1, km: 1000, in: 0.0254, ft: 0.3048, mi: 1609.344 } },
   weight: { label: "重量", base: "kg", units: { mg: 0.000001, g: 0.001, kg: 1, t: 1000, oz: 0.0283495, lb: 0.453592 } },
-  data: { label: "数据大小", base: "B", units: { B: 1, KB: 1024, MB: 1048576, GB: 1073741824, TB: 1099511627776 } },
+  data: { label: "数据大小", base: "B", units: { bit: 0.125, B: 1, KB: 1024, MB: 1048576, GB: 1073741824, TB: 1099511627776 } },
+  area: { label: "面积", base: "m2", units: { "m²": 1, "km²": 1000000, "公顷 ha": 10000, "亩": 666.6667, "ft²": 0.09290304 } },
+  speed: { label: "速度", base: "ms", units: { "m/s": 1, "km/h": 0.2777778, "mph": 0.44704, "节 kn": 0.5144444 } },
+  time: { label: "时长", base: "sec", units: { ms: 0.001, s: 1, min: 60, h: 3600, 天: 86400, 周: 604800 } },
   temp: { label: "温度", base: "°C", units: { "°C": 1, "°F": 1, K: 1 } },
 };
 const unitCat = $("#unitCat"), unitFrom = $("#unitFrom"), unitTo = $("#unitTo"),
@@ -655,22 +717,36 @@ unitCat.addEventListener("change", () => { fillUnitSelects(); convertUnit(); });
 fillUnitSelects();
 convertUnit();
 
-/* ================= 进制转换 ================= */
+/* ================= 进制转换（BigInt，支持任意长度整数） ================= */
 const baseInput = $("#baseInput"), baseFrom = $("#baseFrom"), baseOut = $("#baseOut");
+const BASE_DIGITS = "0123456789abcdefghijklmnopqrstuvwxyz";
+function parseBigBase(str, base) {
+  const s = str.trim().toLowerCase();
+  if (!s) return null;
+  let neg = false, body = s;
+  if (s.startsWith("-")) { neg = true; body = s.slice(1); }
+  else if (s.startsWith("+")) body = s.slice(1);
+  let n = 0n;
+  const B = BigInt(base);
+  for (const ch of body) {
+    const d = BASE_DIGITS.indexOf(ch);
+    if (d < 0 || d >= base) return null;
+    n = n * B + BigInt(d);
+  }
+  return neg ? -n : n;
+}
 function convertBase() {
   const raw = baseInput.value.trim();
   const from = Number(baseFrom.value);
-  const num = parseInt(raw, from);
   baseOut.replaceChildren();
-  const valid = /^[0-9a-z]+$/i.test(raw) && Number.isSafeInteger(num) &&
-    raw.toLowerCase() === num.toString(from).toLowerCase();
+  const num = parseBigBase(raw, from);
   for (const b of [2, 8, 10, 16, 36]) {
     const row = document.createElement("div");
     row.className = "kv";
     const name = document.createElement("span");
     name.textContent = b + " 进制";
     const code = document.createElement("code");
-    code.textContent = valid ? num.toString(b) : "—";
+    code.textContent = num === null ? "—" : num.toString(b);
     const btn = document.createElement("button");
     btn.className = "btn mini";
     btn.textContent = "复制";
@@ -728,6 +804,14 @@ encMode.addEventListener("change", runEncode);
 encInput.addEventListener("input", runEncode);
 $("#encRun").addEventListener("click", runEncode);
 bindCopyBtn($("#encCopy"), () => encOutput.value);
+// 交换：结果放回输入，模式切到对应的逆操作
+const ENC_PAIRS = { urlEnc: "urlDec", urlDec: "urlEnc", b64Enc: "b64Dec", b64Dec: "b64Enc", uniEnc: "uniDec", uniDec: "uniEnc" };
+$("#encSwap").addEventListener("click", () => {
+  if (!encOutput.value) return;
+  encInput.value = encOutput.value;
+  encMode.value = ENC_PAIRS[encMode.value] || encMode.value;
+  runEncode();
+});
 encInput.value = "你好，Toolbox";
 runEncode();
 
@@ -735,10 +819,12 @@ runEncode();
 const rePattern = $("#rePattern"), reFlags = $("#reFlags"),
   reText = $("#reText"), reMsg = $("#reMsg"),
   rePreview = $("#rePreview"), reGroups = $("#reGroups");
+let lastRegexMatches = [];
 
 function renderRegex() {
   reGroups.replaceChildren();
   rePreview.replaceChildren();
+  lastRegexMatches = [];
   const pattern = rePattern.value, flags = [...new Set(reFlags.value)].join("");
   if (!pattern) { setMsg(reMsg, ""); return; }
   let re;
@@ -764,12 +850,13 @@ function renderRegex() {
     frag.append(span);
     last = m.index + m[0].length;
     count++;
-    if (m.length > 1) {
-      const line = document.createElement("div");
-      line.textContent = `匹配 ${count}：「${m[0].slice(0, 60)}」 捕获组：` +
-        m.slice(1).map((g, i) => `$${i + 1}=${g === undefined ? "∅" : String(g).slice(0, 40)}`).join("  ");
-      reGroups.append(line);
-    }
+    lastRegexMatches.push(m[0]);
+    const line = document.createElement("div");
+    line.textContent = `#${count} @${m.index}：「${m[0].slice(0, 60)}」` +
+      (m.length > 1
+        ? "  捕获组：" + m.slice(1).map((g, i) => `$${i + 1}=${g === undefined ? "∅" : String(g).slice(0, 40)}`).join("  ")
+        : "");
+    reGroups.append(line);
   }
   frag.append(text.slice(last));
   rePreview.append(frag);
@@ -777,25 +864,33 @@ function renderRegex() {
 }
 [rePattern, reFlags].forEach((el) => el.addEventListener("input", renderRegex));
 reText.addEventListener("input", renderRegex);
+bindCopyBtn($("#reCopy"), () => lastRegexMatches.join("\n"));
 renderRegex();
 
 /* ================= 文本对比 ================= */
 const diffA = $("#diffA"), diffB = $("#diffB"),
   diffView = $("#diffView"), diffStat = $("#diffStat");
 
-function diffLines(aText, bText) {
+function diffLines(aText, bText, ignoreCase, ignoreWs) {
+  const norm = (s) => {
+    let v = s;
+    if (ignoreWs) v = v.trim();
+    if (ignoreCase) v = v.toLowerCase();
+    return v;
+  };
   const a = aText.split("\n").slice(0, 500);
   const b = bText.split("\n").slice(0, 500);
+  const na = a.map(norm), nb = b.map(norm);
   const n = a.length, m = b.length;
-  // LCS 动态规划
+  // LCS 动态规划（比较用规范化文本，展示用原文）
   const dp = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
   for (let i = n - 1; i >= 0; i--)
     for (let j = m - 1; j >= 0; j--)
-      dp[i][j] = a[i] === b[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
+      dp[i][j] = na[i] === nb[j] ? dp[i + 1][j + 1] + 1 : Math.max(dp[i + 1][j], dp[i][j + 1]);
   const out = [];
   let i = 0, j = 0;
   while (i < n && j < m) {
-    if (a[i] === b[j]) { out.push({ t: "same", s: a[i] }); i++; j++; }
+    if (na[i] === nb[j]) { out.push({ t: "same", s: a[i] }); i++; j++; }
     else if (dp[i + 1][j] >= dp[i][j + 1]) { out.push({ t: "del", s: a[i] }); i++; }
     else { out.push({ t: "add", s: b[j] }); j++; }
   }
@@ -805,7 +900,8 @@ function diffLines(aText, bText) {
 }
 function runDiff() {
   diffView.replaceChildren();
-  const rows = diffLines(diffA.value, diffB.value);
+  const rows = diffLines(diffA.value, diffB.value,
+    $("#diffIgnoreCase").checked, $("#diffIgnoreWs").checked);
   let add = 0, del = 0;
   for (const r of rows) {
     if (r.t !== "same") {
@@ -823,8 +919,11 @@ function runDiff() {
     diffView.append(line);
   }
   diffStat.textContent = `新增 ${add} 行 · 删除 ${del} 行`;
+  diffStat.style.color = add || del ? "var(--warn, #b45309)" : "var(--ok)";
 }
 $("#diffRun").addEventListener("click", runDiff);
+$("#diffIgnoreCase").addEventListener("change", runDiff);
+$("#diffIgnoreWs").addEventListener("change", runDiff);
 runDiff();
 
 /* ================= Cron 解析 ================= */
@@ -893,15 +992,21 @@ function renderCron() {
   cur.setSeconds(0, 0);
   cur.setMinutes(cur.getMinutes() + 1);
   let found = 0;
+  let firstRun = null;
   for (let i = 0; i < 366 * 24 * 60 && found < 5; i++) {
     if (matcher(cur)) {
+      if (!firstRun) firstRun = new Date(cur);
       const row = document.createElement("div");
       row.className = "kv";
       const name = document.createElement("span");
       name.textContent = "第 " + (found + 1) + " 次";
       const code = document.createElement("code");
       code.textContent = cur.toLocaleString("zh-CN", { hour12: false });
-      row.append(name, code);
+      const rel = document.createElement("span");
+      rel.className = "muted";
+      rel.style.fontSize = "0.8rem";
+      rel.textContent = relativeTime(cur.getTime());
+      row.append(name, code, rel);
       cronNext.append(row);
       found++;
     }
@@ -939,22 +1044,43 @@ function randomShortId(len = 12) {
 }
 function generateIds() {
   const n = Math.min(Math.max(Number(uuidCount.value) || 1, 1), 100);
+  const upper = $("#uuidUpper").checked;
   const list = [];
   for (let i = 0; i < n; i++) {
-    list.push(uuidType.value === "v4"
+    let id = uuidType.value === "v4"
       ? (crypto.randomUUID ? crypto.randomUUID()
         : randomShortId(32).replace(/^(.{8})(.{4})(.{4})(.{4})(.{12})$/, "$1-$2-$3-$4-$5"))
-      : randomShortId(12));
+      : randomShortId(12);
+    if (upper) id = id.toUpperCase();
+    list.push(id);
   }
   uuidOut.value = list.join("\n");
 }
 $("#uuidGen").addEventListener("click", generateIds);
+$("#uuidUpper").addEventListener("change", generateIds);
 bindCopyBtn($("#uuidCopy"), () => uuidOut.value);
 generateIds();
 
-/* ================= 哈希计算 ================= */
+/* ================= 哈希计算（文本 + 文件） ================= */
 const hashInput = $("#hashInput"), hashOut = $("#hashOut");
 const HASH_ALGOS = ["SHA-1", "SHA-256", "SHA-384", "SHA-512"];
+
+function hashRow(algo, hex, extra) {
+  const row = document.createElement("div");
+  row.className = "kv";
+  const name = document.createElement("span");
+  name.textContent = algo;
+  const code = document.createElement("code");
+  code.textContent = hex;
+  const btn = document.createElement("button");
+  btn.className = "btn mini";
+  btn.textContent = "复制";
+  bindCopyBtn(btn, () => hex);
+  row.append(name, code, btn);
+  if (extra) row.append(extra);
+  return row;
+}
+
 async function renderHash() {
   hashOut.replaceChildren();
   const text = hashInput.value;
@@ -965,22 +1091,28 @@ async function renderHash() {
       const digest = await crypto.subtle.digest(algo, data);
       const hex = [...new Uint8Array(digest)]
         .map((b) => b.toString(16).padStart(2, "0")).join("");
-      const row = document.createElement("div");
-      row.className = "kv";
-      const name = document.createElement("span");
-      name.textContent = algo;
-      const code = document.createElement("code");
-      code.textContent = hex;
-      const btn = document.createElement("button");
-      btn.className = "btn mini";
-      btn.textContent = "复制";
-      bindCopyBtn(btn, () => hex);
-      row.append(name, code, btn);
-      hashOut.append(row);
+      hashOut.append(hashRow(algo, hex));
     } catch { /* 安全上下文不可用时跳过 */ }
   }
 }
 hashInput.addEventListener("input", renderHash);
+
+$("#hashFileBtn").addEventListener("click", () => $("#hashFilePick").click());
+$("#hashFilePick").addEventListener("change", async (e) => {
+  const file = e.target.files[0];
+  e.target.value = "";
+  if (!file) return;
+  $("#hashFileName").textContent = `正在计算 ${file.name}（${(file.size / 1024 / 1024).toFixed(1)} MB）…`;
+  try {
+    const digest0 = await crypto.subtle.digest("SHA-256", await file.arrayBuffer());
+    const hex = [...new Uint8Array(digest0)].map((b) => b.toString(16).padStart(2, "0")).join("");
+    hashOut.replaceChildren();
+    hashOut.append(hashRow("SHA-256 (文件 " + file.name + ")", hex));
+    $("#hashFileName").textContent = `文件 ${file.name} · ${(file.size / 1024 / 1024).toFixed(1)} MB`;
+  } catch (err) {
+    $("#hashFileName").textContent = "✗ 读取文件失败：" + (err.message || err);
+  }
+});
 renderHash();
 
 /* ================= 文本统计 ================= */
@@ -1107,6 +1239,7 @@ async function decryptKgmFile(file, onStatus) {
       if (isVpr) v ^= KGM_MASK_VPR[i % 17];
       audio[i] = v;
     }
+    onStatus(`解密中… ${Math.round((end / audio.length) * 100)}%`);
     await yieldLoop();
   }
 
@@ -1213,6 +1346,8 @@ function renderJwt() {
   }
 }
 jwtInput.addEventListener("input", renderJwt);
+bindCopyBtn($("#jwtCopyHeader"), () => jwtHeader.textContent);
+bindCopyBtn($("#jwtCopyPayload"), () => jwtPayload.textContent);
 renderJwt();
 
 /* ================= 中文占文生成 ================= */
@@ -1274,8 +1409,10 @@ function renderContrast() {
   const fg = ctFgHex.value.trim(), bg = ctBgHex.value.trim();
   if (!hexToRgb(fg) || !hexToRgb(bg)) { ctRatio.textContent = "颜色格式：#RGB 或 #RRGGBB"; ctRatio.className = "msg err"; return; }
   const ratio = contrastRatio(fg, bg);
+  const lf = relLuminance(fg), lb = relLuminance(bg);
   ctRatio.className = "msg ok";
   ctRatio.textContent = `对比度 ${ratio.toFixed(2)} : 1`;
+  ctLum.textContent = `相对亮度：文字 ${lf.toFixed(4)} · 背景 ${lb.toFixed(4)}`;
   ctPreview.style.color = fg;
   ctPreview.style.background = bg;
   const checks = [
@@ -1300,6 +1437,12 @@ function renderContrast() {
 }
 ctFg.addEventListener("input", () => { ctFgHex.value = ctFg.value; renderContrast(); });
 ctBg.addEventListener("input", () => { ctBgHex.value = ctBg.value; renderContrast(); });
+$("#ctSwap").addEventListener("click", () => {
+  const t = ctFgHex.value;
+  ctFgHex.value = ctBgHex.value; ctBgHex.value = t;
+  ctFg.value = ctFgHex.value; ctBg.value = ctBgHex.value;
+  renderContrast();
+});
 ctFgHex.addEventListener("input", () => {
   if (hexToRgb(ctFgHex.value)) { ctFg.value = ctFgHex.value; renderContrast(); }
 });

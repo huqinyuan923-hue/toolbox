@@ -31,6 +31,13 @@
 
 html { scroll-behavior: smooth; }
 
+/* 全局滚动条与数字等宽 */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; border: 2px solid var(--bg); }
+::-webkit-scrollbar-track { background: transparent; }
+html { scrollbar-color: var(--border) transparent; scrollbar-width: thin; }
+.msg, #tsNow, .stat-box b, .kv code, .pw-display, .jwt-pre { font-variant-numeric: tabular-nums; }
+
 body {
   margin: 0;
   font-family: system-ui, -apple-system, "Segoe UI", "Microsoft YaHei", sans-serif;
@@ -65,20 +72,29 @@ code { background: var(--accent-soft); padding: 2px 6px; border-radius: 6px; fon
   transition: box-shadow 0.2s ease;
 }
 .site-header.scrolled { box-shadow: var(--shadow); }
-.header-inner { display: flex; align-items: center; gap: 12px; padding: 10px 16px; }
+.header-inner { display: flex; align-items: center; gap: 10px; padding: 10px 16px; row-gap: 6px; flex-wrap: wrap; }
 .brand { font-weight: 700; font-size: 1.05rem; color: var(--fg); text-decoration: none; white-space: nowrap; }
 
-.tool-nav { display: flex; gap: 4px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; flex: 1; }
-.tool-nav::-webkit-scrollbar { display: none; }
+.tool-nav { display: flex; gap: 3px 2px; flex-wrap: wrap; flex: 1; align-items: center; }
 .tool-btn {
   border: 1px solid transparent;
   background: transparent; color: var(--fg-muted);
-  padding: 6px 12px; border-radius: 999px;
-  cursor: pointer; font-size: 0.9rem; white-space: nowrap;
+  padding: 5px 10px; border-radius: 999px;
+  cursor: pointer; font-size: 0.88rem; white-space: nowrap;
+  min-height: 32px;
   transition: background 0.15s ease, color 0.15s ease;
 }
 .tool-btn:hover { color: var(--fg); background: var(--accent-soft); }
-.tool-btn.active { background: var(--accent); color: #fff; }
+.tool-btn.active { background: var(--accent); color: #fff; box-shadow: 0 1px 4px rgb(37 99 235 / 0.35); }
+.nav-sep { width: 1px; height: 20px; background: var(--border); margin: 0 5px; flex: none; }
+
+#toolSearch {
+  width: 120px; padding: 5px 10px; font-size: 0.85rem;
+  border-radius: 999px; margin: 0; flex: none;
+  transition: width 0.2s ease, border-color 0.15s ease;
+}
+#toolSearch:focus { width: 170px; }
+.tool-btn.nav-hidden { display: none; }
 
 .icon-btn {
   border: 1px solid var(--border); background: var(--bg-card);
@@ -303,6 +319,14 @@ textarea:focus, input:focus, select:focus, .btn:focus-visible, .tool-btn:focus-v
 }
 .audio-result .ar-name { flex: 1; word-break: break-all; }
 .audio-result .ar-size { color: var(--fg-muted); font-size: 0.82rem; white-space: nowrap; }
+
+.pw-history { margin-top: 10px; }
+.pw-history .pw-hist-row {
+  display: flex; align-items: center; gap: 8px;
+  font-family: ui-monospace, Consolas, monospace; font-size: 0.8rem;
+  color: var(--fg-muted); padding: 3px 2px;
+}
+.pw-history .pw-hist-row code { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; background: transparent; padding: 0; }
 
 .jwt-pre {
   font-family: ui-monospace, Consolas, monospace; font-size: 0.82rem;

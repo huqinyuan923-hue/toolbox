@@ -36,27 +36,33 @@
     <div class="wrap header-inner">
       <a class="brand" href="./">🔧 开发者工具箱</a>
       <nav class="tool-nav" aria-label="工具导航" role="tablist">
-        <button class="tool-btn" role="tab" id="tab-json" aria-controls="tool-json" aria-selected="true" data-tool="json">JSON 格式化</button>
-        <button class="tool-btn" role="tab" id="tab-timestamp" aria-controls="tool-timestamp" aria-selected="false" data-tool="timestamp" tabindex="-1">时间戳</button>
-        <button class="tool-btn" role="tab" id="tab-qrcode" aria-controls="tool-qrcode" aria-selected="false" data-tool="qrcode" tabindex="-1">二维码</button>
-        <button class="tool-btn" role="tab" id="tab-password" aria-controls="tool-password" aria-selected="false" data-tool="password" tabindex="-1">密码生成</button>
-        <button class="tool-btn" role="tab" id="tab-markdown" aria-controls="tool-markdown" aria-selected="false" data-tool="markdown" tabindex="-1">Markdown</button>
-        <button class="tool-btn" role="tab" id="tab-color" aria-controls="tool-color" aria-selected="false" data-tool="color" tabindex="-1">颜色工具</button>
-        <button class="tool-btn" role="tab" id="tab-units" aria-controls="tool-units" aria-selected="false" data-tool="units" tabindex="-1">单位换算</button>
-        <button class="tool-btn" role="tab" id="tab-base" aria-controls="tool-base" aria-selected="false" data-tool="base" tabindex="-1">进制转换</button>
-        <button class="tool-btn" role="tab" id="tab-encode" aria-controls="tool-encode" aria-selected="false" data-tool="encode" tabindex="-1">编码转换</button>
-        <button class="tool-btn" role="tab" id="tab-regex" aria-controls="tool-regex" aria-selected="false" data-tool="regex" tabindex="-1">正则测试</button>
-        <button class="tool-btn" role="tab" id="tab-diff" aria-controls="tool-diff" aria-selected="false" data-tool="diff" tabindex="-1">文本对比</button>
-        <button class="tool-btn" role="tab" id="tab-cron" aria-controls="tool-cron" aria-selected="false" data-tool="cron" tabindex="-1">Cron 解析</button>
-        <button class="tool-btn" role="tab" id="tab-uuid" aria-controls="tool-uuid" aria-selected="false" data-tool="uuid" tabindex="-1">UUID 生成</button>
-        <button class="tool-btn" role="tab" id="tab-hash" aria-controls="tool-hash" aria-selected="false" data-tool="hash" tabindex="-1">哈希计算</button>
-        <button class="tool-btn" role="tab" id="tab-textstats" aria-controls="tool-textstats" aria-selected="false" data-tool="textstats" tabindex="-1">文本统计</button>
-        <button class="tool-btn" role="tab" id="tab-audio" aria-controls="tool-audio" aria-selected="false" data-tool="audio" tabindex="-1">音乐解锁</button>
-        <button class="tool-btn" role="tab" id="tab-jwt" aria-controls="tool-jwt" aria-selected="false" data-tool="jwt" tabindex="-1">JWT 解析</button>
-        <button class="tool-btn" role="tab" id="tab-lorem" aria-controls="tool-lorem" aria-selected="false" data-tool="lorem" tabindex="-1">占文生成</button>
-        <button class="tool-btn" role="tab" id="tab-contrast" aria-controls="tool-contrast" aria-selected="false" data-tool="contrast" tabindex="-1">对比度检查</button>
-        <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">每日一签</button>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button class="tool-btn" role="tab" id="tab-json" aria-controls="tool-json" aria-selected="true" data-tool="json">🧾 JSON</button>
+        <button class="tool-btn" role="tab" id="tab-timestamp" aria-controls="tool-timestamp" aria-selected="false" data-tool="timestamp" tabindex="-1">⏱️ 时间戳</button>
+        <button class="tool-btn" role="tab" id="tab-base" aria-controls="tool-base" aria-selected="false" data-tool="base" tabindex="-1">🔀 进制</button>
+        <button class="tool-btn" role="tab" id="tab-encode" aria-controls="tool-encode" aria-selected="false" data-tool="encode" tabindex="-1">🔡 编码</button>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button class="tool-btn" role="tab" id="tab-qrcode" aria-controls="tool-qrcode" aria-selected="false" data-tool="qrcode" tabindex="-1">🔳 二维码</button>
+        <button class="tool-btn" role="tab" id="tab-password" aria-controls="tool-password" aria-selected="false" data-tool="password" tabindex="-1">🔑 密码</button>
+        <button class="tool-btn" role="tab" id="tab-uuid" aria-controls="tool-uuid" aria-selected="false" data-tool="uuid" tabindex="-1">🆔 UUID</button>
+        <button class="tool-btn" role="tab" id="tab-hash" aria-controls="tool-hash" aria-selected="false" data-tool="hash" tabindex="-1">#️⃣ 哈希</button>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button class="tool-btn" role="tab" id="tab-markdown" aria-controls="tool-markdown" aria-selected="false" data-tool="markdown" tabindex="-1">📝 Markdown</button>
+        <button class="tool-btn" role="tab" id="tab-regex" aria-controls="tool-regex" aria-selected="false" data-tool="regex" tabindex="-1">✅ 正则</button>
+        <button class="tool-btn" role="tab" id="tab-diff" aria-controls="tool-diff" aria-selected="false" data-tool="diff" tabindex="-1">🆚 对比</button>
+        <button class="tool-btn" role="tab" id="tab-textstats" aria-controls="tool-textstats" aria-selected="false" data-tool="textstats" tabindex="-1">📊 文本统计</button>
+        <button class="tool-btn" role="tab" id="tab-lorem" aria-controls="tool-lorem" aria-selected="false" data-tool="lorem" tabindex="-1">📄 占文</button>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button class="tool-btn" role="tab" id="tab-color" aria-controls="tool-color" aria-selected="false" data-tool="color" tabindex="-1">🎨 颜色</button>
+        <button class="tool-btn" role="tab" id="tab-contrast" aria-controls="tool-contrast" aria-selected="false" data-tool="contrast" tabindex="-1">🌗 对比度</button>
+        <span class="nav-sep" aria-hidden="true"></span>
+        <button class="tool-btn" role="tab" id="tab-units" aria-controls="tool-units" aria-selected="false" data-tool="units" tabindex="-1">📐 单位</button>
+        <button class="tool-btn" role="tab" id="tab-cron" aria-controls="tool-cron" aria-selected="false" data-tool="cron" tabindex="-1">⏰ Cron</button>
+        <button class="tool-btn" role="tab" id="tab-jwt" aria-controls="tool-jwt" aria-selected="false" data-tool="jwt" tabindex="-1">🔐 JWT</button>
+        <button class="tool-btn" role="tab" id="tab-audio" aria-controls="tool-audio" aria-selected="false" data-tool="audio" tabindex="-1">🎵 音乐解锁</button>
+        <button class="tool-btn" role="tab" id="tab-daily" aria-controls="tool-daily" aria-selected="false" data-tool="daily" tabindex="-1">🍀 每日一签</button>
       </nav>
+      <input id="toolSearch" type="search" placeholder="🔍 搜工具" aria-label="搜索工具" autocomplete="off" />
       <button id="themeToggle" class="icon-btn" title="切换深浅色（跟随系统初始化）" aria-label="切换深浅色主题">🌙</button>
     </div>
   </header>
@@ -132,10 +138,15 @@
               </select>
             </label>
           </div>
-          <div class="btn-row">
-            <button id="qrGen" class="btn primary">生成</button>
-            <button id="qrDownload" class="btn">下载 PNG</button>
-          </div>
+        <div class="opt-row">
+          <label class="opt">前景 <input id="qrFg" type="color" value="#000000" style="width:44px;height:32px;padding:2px" /></label>
+          <label class="opt">背景 <input id="qrBg" type="color" value="#ffffff" style="width:44px;height:32px;padding:2px" /></label>
+          <span class="muted small">深色前景 + 浅色背景最容易扫</span>
+        </div>
+        <div class="btn-row">
+          <button id="qrGen" class="btn primary">生成</button>
+          <button id="qrDownload" class="btn">下载 PNG</button>
+        </div>
           <p id="qrMsg" class="msg" role="status" aria-live="polite"></p>
         </div>
         <div class="qr-box">
@@ -169,6 +180,7 @@
           <label class="opt"><input type="checkbox" id="pwNoAmbiguous" /> 排除易混淆 (l I 1 O 0)</label>
         </div>
         <button id="pwGen" class="btn primary">重新生成</button>
+        <div id="pwHistory" class="pw-history"></div>
       </div>
     </section>
 
@@ -228,6 +240,9 @@
               <option value="length">长度</option>
               <option value="weight">重量</option>
               <option value="data">数据大小</option>
+              <option value="area">面积</option>
+              <option value="speed">速度</option>
+              <option value="time">时长</option>
               <option value="temp">温度</option>
             </select>
           </label>
@@ -277,7 +292,10 @@
         </label>
       </div>
       <textarea id="encInput" rows="4" spellcheck="false" placeholder="输入内容"></textarea>
-      <button id="encRun" class="btn primary">转换</button>
+      <div class="btn-row">
+        <button id="encRun" class="btn primary">转换</button>
+        <button id="encSwap" class="btn" title="把结果放回输入并切到对应解码模式">⇄ 交换</button>
+      </div>
       <textarea id="encOutput" rows="4" spellcheck="false" readonly placeholder="结果"></textarea>
       <div class="btn-row"><button class="btn" id="encCopy">复制结果</button></div>
       <p id="encMsg" class="msg" role="status" aria-live="polite"></p>
@@ -293,6 +311,7 @@
       </div>
       <textarea id="reText" rows="6" spellcheck="false" placeholder="测试文本">订单 A123 完成于 2026-01-15，订单 B456 完成于 2026-03-02</textarea>
       <p id="reMsg" class="msg" role="status" aria-live="polite"></p>
+      <div class="btn-row"><button id="reCopy" class="btn mini">复制全部匹配</button></div>
       <div id="rePreview" class="md-preview" style="height:auto; min-height:80px"></div>
       <div id="reGroups" class="re-group"></div>
     </section>
@@ -310,8 +329,12 @@
 第三行
 新增的第四行</textarea>
       </div>
-      <div class="btn-row"><button id="diffRun" class="btn primary">对比</button>
-        <span id="diffStat" class="muted small"></span></div>
+      <div class="btn-row">
+        <button id="diffRun" class="btn primary">对比</button>
+        <label class="opt" style="margin:0"><input type="checkbox" id="diffIgnoreCase" /> 忽略大小写</label>
+        <label class="opt" style="margin:0"><input type="checkbox" id="diffIgnoreWs" /> 忽略行首尾空白</label>
+        <span id="diffStat" class="muted small"></span>
+      </div>
       <div id="diffView" class="diff-view"></div>
     </section>
 
@@ -341,6 +364,7 @@
             </select>
           </label>
           <label class="opt">数量 <input id="uuidCount" type="number" min="1" max="100" value="5" style="width:80px" /></label>
+          <label class="opt"><input type="checkbox" id="uuidUpper" /> 大写</label>
         </div>
         <button id="uuidGen" class="btn primary">生成</button>
         <textarea id="uuidOut" rows="7" readonly spellcheck="false" style="margin-top:10px"></textarea>
@@ -353,6 +377,11 @@
       <h2>哈希计算</h2>
       <p class="hint">使用浏览器原生 crypto 计算 SHA 系列哈希，本地完成。</p>
       <textarea id="hashInput" rows="4" spellcheck="false" placeholder="输入要计算哈希的文本"></textarea>
+      <div class="opt-row">
+        <button id="hashFileBtn" class="btn mini">计算文件哈希…</button>
+        <input id="hashFilePick" type="file" hidden />
+        <span id="hashFileName" class="muted small"></span>
+      </div>
       <div id="hashOut"></div>
     </section>
 
@@ -391,10 +420,12 @@
         <div class="card">
           <h3>Header</h3>
           <pre id="jwtHeader" class="jwt-pre"></pre>
+          <button class="btn mini" id="jwtCopyHeader">复制 Header</button>
         </div>
         <div class="card">
           <h3>Payload</h3>
           <pre id="jwtPayload" class="jwt-pre"></pre>
+          <button class="btn mini" id="jwtCopyPayload">复制 Payload</button>
           <div id="jwtTimes"></div>
         </div>
       </div>
@@ -420,10 +451,12 @@
       <div class="grid-2">
         <div class="card">
           <div class="opt-row"><label class="opt">文字 <input id="ctFg" type="color" value="#1c2430" style="width:52px;height:36px;padding:2px" /></label>
-          <input id="ctFgHex" type="text" value="#1c2430" maxlength="7" style="width:100px" /></div>
+          <input id="ctFgHex" type="text" value="#1c2430" maxlength="7" style="width:100px" />
+          <button class="btn mini" id="ctSwap" title="交换前景与背景">⇄</button></div>
           <div class="opt-row"><label class="opt">背景 <input id="ctBg" type="color" value="#ffffff" style="width:52px;height:36px;padding:2px" /></label>
           <input id="ctBgHex" type="text" value="#ffffff" maxlength="7" style="width:100px" /></div>
           <p class="msg ok" id="ctRatio" style="font-size:1.3rem"></p>
+          <p class="muted small" id="ctLum"></p>
           <div id="ctLevels"></div>
         </div>
         <div class="card">
