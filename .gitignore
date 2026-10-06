@@ -9,3 +9,6 @@ desktop.ini
 
 # Mimosa 扫描器状态
 .mimosa/
+
+.vercel
+.env*.local

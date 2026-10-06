@@ -1,12 +1,12 @@
 # 🔧 开发者工具箱 · Toolbox
 
-[![GitHub Pages](https://img.shields.io/badge/在线使用-huqinyuan923--hue.github.io%2Ftoolbox-2563eb?logo=github)](https://huqinyuan923-hue.github.io/toolbox/)
+[![GitHub Pages](https://img.shields.io/badge/在线使用-toolbox.adcakeyuan.top-2563eb?logo=vercel)](https://toolbox.adcakeyuan.top)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![No Build](https://img.shields.io/badge/构建-零框架%20·%20零构建-orange)](#-技术栈)
 
 一组免费、无需登录、**纯前端运行**的日常小工具。所有计算都在你的浏览器里完成，数据不会上传到任何服务器，并支持**离线使用**（PWA）。
 
-**在线使用 → <https://huqinyuan923-hue.github.io/toolbox/>**
+**在线使用 → <https://toolbox.adcakeyuan.top>**
 
 ![JSON 格式化](docs/screenshot-json.png)
 ![每日一签](docs/screenshot-daily.png)
