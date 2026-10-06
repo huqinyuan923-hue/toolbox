@@ -1146,110 +1146,28 @@ function renderTextStats() {
 textStatsInput.addEventListener("input", renderTextStats);
 renderTextStats();
 
-/* ================= 音乐解锁（酷狗 KGM/KGMA/VPR） ================= */
-/* 算法与常量来自开源项目 unlock-music / kugou-crypto（公开常数）。
- * 解密完全在浏览器本地进行，文件不上传。仅用于个人合法获取的文件。 */
-const KGM_MAGIC = new Uint8Array([
-  0x7c, 0xd5, 0x32, 0xeb, 0x86, 0x02, 0x7f, 0x4b,
-  0xa8, 0xaf, 0xa6, 0x8e, 0x0f, 0xff, 0x99, 0x14,
-]);
-const VPR_MAGIC = new Uint8Array([
-  0x05, 0x28, 0xbc, 0x96, 0xe9, 0xe4, 0x5a, 0x43,
-  0x91, 0xaa, 0xbd, 0xd0, 0x7a, 0xf5, 0x36, 0x31,
-]);
-const KGM_MASK_PREDEF = new Uint8Array([
-  0xb8, 0xd5, 0x3d, 0xb2, 0xe9, 0xaf, 0x78, 0x8c, 0x83, 0x33, 0x71, 0x51, 0x76, 0xa0, 0xcd, 0x37,
-  0x2f, 0x3e, 0x35, 0x8d, 0xa9, 0xbe, 0x98, 0xb7, 0xe7, 0x8c, 0x22, 0xce, 0x5a, 0x61, 0xdf, 0x68,
-  0x69, 0x89, 0xfe, 0xa5, 0xb6, 0xde, 0xa9, 0x77, 0xfc, 0xc8, 0xbd, 0xbd, 0xe5, 0x6d, 0x3e, 0x5a,
-  0x36, 0xef, 0x69, 0x4e, 0xbe, 0xe1, 0xe9, 0x66, 0x1c, 0xf3, 0xd9, 0x02, 0xb6, 0xf2, 0x12, 0x9b,
-  0x44, 0xd0, 0x6f, 0xb9, 0x35, 0x89, 0xb6, 0x46, 0x6d, 0x73, 0x82, 0x06, 0x69, 0xc1, 0xed, 0xd7,
-  0x85, 0xc2, 0x30, 0xdf, 0xa2, 0x62, 0xbe, 0x79, 0x2d, 0x62, 0x62, 0x3d, 0x0d, 0x7e, 0xbe, 0x48,
-  0x89, 0x23, 0x02, 0xa0, 0xe4, 0xd5, 0x75, 0x51, 0x32, 0x02, 0x53, 0xfd, 0x16, 0x3a, 0x21, 0x3b,
-  0x16, 0x0f, 0xc3, 0xb2, 0xbb, 0xb3, 0xe2, 0xba, 0x3a, 0x3d, 0x13, 0xec, 0xf6, 0x01, 0x45, 0x84,
-  0xa5, 0x70, 0x0f, 0x93, 0x49, 0x0c, 0x64, 0xcd, 0x31, 0xd5, 0xcc, 0x4c, 0x07, 0x01, 0x9e, 0x00,
-  0x1a, 0x23, 0x90, 0xbf, 0x88, 0x1e, 0x3b, 0xab, 0xa6, 0x3e, 0xc4, 0x73, 0x47, 0x10, 0x7e, 0x3b,
-  0x5e, 0xbc, 0xe3, 0x00, 0x84, 0xff, 0x09, 0xd4, 0xe0, 0x89, 0x0f, 0x5b, 0x58, 0x70, 0x4f, 0xfb,
-  0x65, 0xd8, 0x5c, 0x53, 0x1b, 0xd3, 0xc8, 0xc6, 0xbf, 0xef, 0x98, 0xb0, 0x50, 0x4f, 0x0f, 0xea,
-  0xe5, 0x83, 0x58, 0x8c, 0x28, 0x2c, 0x84, 0x67, 0xcd, 0xd0, 0x9e, 0x47, 0xdb, 0x27, 0x50, 0xca,
-  0xf4, 0x63, 0x63, 0xe8, 0x97, 0x7f, 0x1b, 0x4b, 0x0c, 0xc2, 0xc1, 0x21, 0x4c, 0xcc, 0x58, 0xf5,
-  0x94, 0x52, 0xa3, 0xf3, 0xd3, 0xe0, 0x68, 0xf4, 0x00, 0x23, 0xf3, 0x5e, 0x0a, 0x7b, 0x93, 0xdd,
-  0xab, 0x12, 0xb2, 0x13, 0xe8, 0x84, 0xd7, 0xa7, 0x9f, 0x0f, 0x32, 0x4c, 0x55, 0x1d, 0x04, 0x36,
-  0x52, 0xdc, 0x03, 0xf3, 0xf9, 0x4e, 0x42, 0xe9, 0x3d, 0x61, 0xef, 0x7c, 0xb6, 0xb3, 0x93, 0x50,
-]);
-const KGM_MASK_VPR = new Uint8Array([
-  0x25, 0xdf, 0xe8, 0xa6, 0x75, 0x1e, 0x75, 0x0e,
-  0x2f, 0x80, 0xf3, 0x2d, 0xb8, 0xb6, 0xe3, 0x11, 0x00,
-]);
-const KGM_MASK_URL = "kgm-v2-mask.bin"; // gzip 流（1.1MB → 6.5MB，覆盖 ≤104MB 音频）
-const KGM_MAX_AUDIO = 6.5 * 1024 * 1024 * 16;
-
-let kgmMaskPromise = null;
-function loadKgmMask() {
-  kgmMaskPromise ??= (async () => {
-    const res = await fetch(KGM_MASK_URL);
-    if (!res.ok) throw new Error("解密表加载失败（" + res.status + "）");
-    const ds = res.body.pipeThrough(new DecompressionStream("gzip"));
-    return new Uint8Array(await new Response(ds).arrayBuffer());
-  })();
-  kgmMaskPromise.catch(() => { kgmMaskPromise = null; }); // 失败允许重试
-  return kgmMaskPromise;
-}
-
-function sniffAudio(bytes) {
-  if (bytes[0] === 0x49 && bytes[1] === 0x44 && bytes[2] === 0x33) return "mp3"; // "ID3"
-  if (bytes[0] === 0xff && (bytes[1] & 0xe0) === 0xe0) return "mp3";
-  if (bytes[0] === 0x66 && bytes[1] === 0x4c && bytes[2] === 0x61 && bytes[3] === 0x43) return "flac"; // "fLaC"
-  if (bytes[0] === 0x4f && bytes[1] === 0x67 && bytes[2] === 0x67 && bytes[3] === 0x53) return "ogg"; // "OggS"
-  if (bytes[0] === 0x52 && bytes[1] === 0x49 && bytes[2] === 0x46 && bytes[3] === 0x46) return "wav"; // "RIFF"
-  if (bytes[4] === 0x66 && bytes[5] === 0x74 && bytes[6] === 0x79 && bytes[7] === 0x70) return "m4a"; // "ftyp"
-  return null;
-}
-function stripAudioExt(name) {
-  return name.replace(/\.(kgm|kgma|vpr)(\.\w+)*$/i, "").replace(/\(\d+\)\s*$/, "").trim() || "audio";
-}
-const yieldLoop = () => new Promise((r) => setTimeout(r, 0));
-
-async function decryptKgmFile(file, onStatus) {
-  const bytes = new Uint8Array(await file.arrayBuffer());
-  if (bytes.length < 0x400) throw new Error("文件太小，可能未下载完整");
-  let isVpr;
-  const eq16 = (magic) => bytes.subarray(0, 16).every((b, i) => b === magic[i]);
-  if (eq16(KGM_MAGIC)) isVpr = false;
-  else if (eq16(VPR_MAGIC)) isVpr = true;
-  else throw new Error("不是 KGM/KGMA/VPR 文件（文件头不匹配）");
-
-  const view = new DataView(bytes.buffer);
-  const headerLen = view.getUint32(0x10, true);
-  if (headerLen < 0x2c || headerLen >= bytes.length) throw new Error("文件头长度异常");
-  const key = new Uint8Array(17);
-  key.set(bytes.subarray(0x1c, 0x2c));
-  const audio = bytes.slice(headerLen); // 拷贝出加密区
-  if (audio.length > KGM_MAX_AUDIO) throw new Error("加密音频超过 104MB，暂不支持");
-
-  onStatus("加载解密表…");
-  const maskLarge = await loadKgmMask();
-
-  onStatus("解密中…");
-  const CHUNK = 1024 * 1024;
-  for (let start = 0; start < audio.length; start += CHUNK) {
-    const end = Math.min(start + CHUNK, audio.length);
-    for (let i = start; i < end; i++) {
-      let v = audio[i] ^ key[i % 17] ^ KGM_MASK_PREDEF[i % 272] ^ maskLarge[i >> 4];
-      v ^= (v & 0x0f) << 4;
-      if (isVpr) v ^= KGM_MASK_VPR[i % 17];
-      audio[i] = v;
-    }
-    onStatus(`解密中… ${Math.round((end / audio.length) * 100)}%`);
-    await yieldLoop();
-  }
-
-  const fmt = sniffAudio(audio);
-  if (!fmt) throw new Error("解密完成但无法识别音频格式（可能是酷狗新版外部 Key 格式，暂不支持）");
-  return { data: audio, ext: fmt };
+/* ================= 音乐解锁（酷狗 / QQ 音乐 / 网易云） ================= */
+/* 解密核心在 audio-decrypt.js（按需加载），算法移植自开源项目 unlock-music，
+ * 并以其公开测试向量验证。全部在浏览器本地进行，文件不上传。
+ * 仅用于个人合法获取的文件，请勿传播解密结果。 */
+let audioLibPromise = null;
+function loadAudioLib() {
+  audioLibPromise ??= new Promise((resolve, reject) => {
+    const s = document.createElement("script");
+    s.src = "audio-decrypt.js";
+    s.onload = () => window.AudioDecryptReady ? resolve() : reject(new Error("audio-decrypt.js 加载异常"));
+    s.onerror = () => reject(new Error("audio-decrypt.js 加载失败"));
+    document.head.appendChild(s);
+  });
+  audioLibPromise.catch(() => { audioLibPromise = null; });
+  return audioLibPromise;
 }
 
 const audioDrop = $("#audioDrop"), audioPick = $("#audioPick"),
-  audioMsg = $("#audioMsg"), audioResults = $("#audioResults");
+  audioMsg = $("#audioMsg"), audioResults = $("#audioResults"),
+  audioDbPick = $("#audioDbPick");
+let kggDbMapping = null; // 会话内缓存：audioHash → ekey
+
 $("#audioPickBtn").addEventListener("click", () => audioPick.click());
 audioPick.addEventListener("change", () => { handleAudioFiles([...audioPick.files]); audioPick.value = ""; });
 ["dragover", "dragenter"].forEach((ev) =>
@@ -1258,17 +1176,54 @@ audioPick.addEventListener("change", () => { handleAudioFiles([...audioPick.file
   audioDrop.addEventListener(ev, (e) => { e.preventDefault(); audioDrop.classList.remove("over"); }));
 audioDrop.addEventListener("drop", (e) => handleAudioFiles([...e.dataTransfer.files]));
 
+$("#audioDbBtn").addEventListener("click", () => audioDbPick.click());
+audioDbPick.addEventListener("change", async () => {
+  const dbFile = audioDbPick.files[0];
+  audioDbPick.value = "";
+  if (!dbFile) return;
+  setMsg(audioMsg, `正在解析数据库 ${dbFile.name}…`);
+  try {
+    await loadAudioLib();
+    const mapping = await window.AudioDecrypt.prepareKggKeys(dbFile);
+    kggDbMapping = mapping;
+    setMsg(audioMsg, `✓ 数据库已就绪：包含 ${mapping.size} 条密钥，现在可以解 KGG 文件了`, "ok");
+  } catch (e) {
+    kggDbMapping = null;
+    setMsg(audioMsg, "✗ 数据库解析失败：" + (e.message || e), "err");
+  }
+});
+
+const AUDIO_ACCEPT_RE = /\.(kgm|kgma|vpr|kgg|qmc0|qmc2|qmc3|qmc4|qmc6|qmc8|qmcflac|qmcogg|qmcmp3|tkm|mflac0|mflac1|mflaca|mflach|mflacl|mflacm|mflac|mgg0|mgg1|mgga|mggh|mggl|mggm|mgg|mmp4|bkcflac|bkcmp3|bkcm4a|bkcwav|bkcape|bkcogg|bkcwma|bkcmp4|666c6163|6d7033|6f6767|6d3461|776wma|7776176|ncm)$/i;
+
 async function handleAudioFiles(files) {
-  const targets = files.filter((f) => /\.(kgm|kgma|vpr)$/i.test(f.name));
-  if (!targets.length) { setMsg(audioMsg, "请选择 .kgm / .kgma / .vpr 文件", "err"); return; }
+  const targets = files.filter((f) => AUDIO_ACCEPT_RE.test(f.name));
+  if (!targets.length) {
+    setMsg(audioMsg, "请选择支持的加密音乐文件（酷狗 kgm/kgma/vpr/kgg、QQ 音乐 qmc*/mflac*/mgg*/tkm、网易云 ncm 等）", "err");
+    return;
+  }
   setMsg(audioMsg, "");
   for (const file of targets) {
-    const status = setMsg(audioMsg, `正在处理 ${file.name}…`);
     try {
-      const { data, ext } = await decryptKgmFile(file, (s) => setMsg(audioMsg, `${file.name}：${s}`));
-      const base = stripAudioExt(file.name);
-      const outName = base + "." + ext;
-      const url = URL.createObjectURL(new Blob([data]));
+      setMsg(audioMsg, `正在处理 ${file.name}…`);
+      await loadAudioLib();
+      const needDb = /\.kgg$/i.test(file.name);
+      if (needDb && !kggDbMapping) {
+        setMsg(audioMsg, "✗ " + file.name + "：KGG 文件需要先上传酷狗密钥数据库（db 文件），见下方说明", "err");
+        continue;
+      }
+      const ext = (file.name.match(/\.([a-z0-9]+)$/i) || [])[1] || "";
+      const r = await window.AudioDecrypt.decryptAudioFile(
+        file, ext,
+        needDb ? () => Promise.resolve(kggDbMapping) : null,
+        (s) => setMsg(audioMsg, `${file.name}：${s}`));
+      // 输出名：优先 NCM 元数据（歌手 - 歌名），否则原名去加密后缀
+      let outName = window.AudioDecrypt.stripAudioExtName(file.name);
+      if (r.meta && r.meta.musicName) {
+        const artist = r.meta.artist && r.meta.artist[0] && r.meta.artist[0][0];
+        outName = (artist ? artist + " - " : "") + r.meta.musicName;
+      }
+      outName = outName.replace(/[\\/:*?"<>|]/g, "_") + "." + r.ext;
+      const url = URL.createObjectURL(new Blob([r.data]));
       const row = document.createElement("div");
       row.className = "audio-result";
       const name = document.createElement("span");
@@ -1276,7 +1231,7 @@ async function handleAudioFiles(files) {
       name.textContent = "🎵 " + outName;
       const size = document.createElement("span");
       size.className = "ar-size";
-      size.textContent = (data.length / 1024 / 1024).toFixed(1) + " MB";
+      size.textContent = (r.data.length / 1024 / 1024).toFixed(1) + " MB";
       const dl = document.createElement("a");
       dl.className = "btn primary";
       dl.href = url;

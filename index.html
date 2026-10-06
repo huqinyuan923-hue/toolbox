@@ -395,20 +395,34 @@
 
     <!-- 音乐解锁 -->
     <section id="tool-audio" class="tool-panel" role="tabpanel" aria-labelledby="tab-audio" tabindex="0" hidden>
-      <h2>音乐解锁（酷狗 KGM → MP3/FLAC）</h2>
+      <h2>音乐解锁</h2>
       <p class="hint">
-        酷狗的 .kgm / .kgma / .vpr 是把原始音频加密封装的格式，本工具在浏览器本地无损还原为
-        MP3 / FLAC 等。<strong>仅限转换你合法获取的音乐文件供个人使用，请勿传播解密结果。</strong>
-        文件全程不离开浏览器。
+        酷狗 <b>KGM / KGMA / VPR / KGG</b>、QQ 音乐 <b>QMC0/2/3/8 · QMCFLAC/OGG · MFLAC/MGG · TKM · BKC*</b>、
+        网易云 <b>NCM</b> —— 在浏览器本地无损还原为 MP3 / FLAC 等原始格式。文件全程不离开浏览器。
+        <strong>仅限转换你合法获取的音乐文件供个人使用，请勿传播解密结果。</strong>
       </p>
       <div id="audioDrop" class="drop-zone">
         拖拽文件到此处，或
         <button id="audioPickBtn" class="btn">选择文件</button>
-        <input id="audioPick" type="file" multiple accept=".kgm,.kgma,.vpr" hidden />
-        <p class="small">支持批量 · 单文件加密音频 ≤ 100MB · 需联网加载一次解密表（约 1.1MB）</p>
+        <input id="audioPick" type="file" multiple
+          accept=".kgm,.kgma,.vpr,.kgg,.qmc0,.qmc2,.qmc3,.qmc4,.qmc6,.qmc8,.qmcflac,.qmcogg,.qmcmp3,.tkm,.mflac,.mflac0,.mflac1,.mflaca,.mflach,.mflacl,.mflacm,.mgg,.mgg0,.mgg1,.mgga,.mggh,.mggl,.mggm,.mmp4,.bkcflac,.bkcmp3,.bkcm4a,.bkcwav,.bkcape,.bkcogg,.bkcwma,.666c6163,.6d7033,.6f6767,.6d3461,.776wma,.ncm" hidden />
+        <p class="small">支持批量 · 需联网加载解密资源（首次约 1-2MB，之后离线可用）</p>
       </div>
       <p id="audioMsg" class="msg" role="status" aria-live="polite"></p>
       <div id="audioResults"></div>
+      <details class="token-box">
+        <summary>解 KGG 文件需要先上传酷狗密钥数据库（db 文件）</summary>
+        <p class="small muted">
+          KGG（酷狗新版）的解密密钥不在音频文件里，而是存在本机酷狗客户端的加密数据库中。
+          在酷狗安装目录（通常为 <code>…\KuGou\KugouCache\kugou\kgg</code> 旁的 db 文件，或搜索 <code>*.db</code>）找到它并上传，
+          本工具会在浏览器里解出密钥映射（不上传 db），之后即可解你账号下载的 KGG 文件。
+        </p>
+        <div class="btn-row">
+          <button id="audioDbBtn" class="btn">选择 KGG 数据库（db 文件）</button>
+          <input id="audioDbPick" type="file" accept=".db,.db-wal,.sqlite" hidden />
+          <span id="audioDbName" class="muted small"></span>
+        </div>
+      </details>
     </section>
 
     <!-- JWT 解析 -->

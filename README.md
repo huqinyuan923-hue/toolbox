@@ -31,7 +31,7 @@
 | UUID 生成 | UUID v4 / 12 位短 ID，批量生成 |
 | 哈希计算 | SHA-1 / 256 / 384 / 512（浏览器原生 crypto） |
 | 文本统计 | 字符 / 中文字数 / 英文单词 / 行段 / 阅读时长 |
-| 音乐解锁 | 酷狗 KGM/KGMA/VPR → MP3/FLAC 无损还原，浏览器本地解密（算法来自开源 unlock-music，仅限个人合法文件） |
+| 音乐解锁 | 酷狗 **KGM/KGMA/VPR/KGG**、QQ 音乐 **QMC 全家族（QMC0/2/3/8 · QMCFLAC/OGG · MFLAC/MGG · TKM · BKC\*）**、网易云 **NCM** → 无损还原原始音频，浏览器本地解密（算法移植自开源 unlock-music，经其官方测试向量验证；仅限个人合法文件） |
 | JWT 解析 | 解码 Header/Payload 与时间声明（仅解码展示，不验证签名） |
 | 占文生成 | 中文随机占位文本，为排版原型填充内容 |
 | 对比度检查 | WCAG 2.x 前景/背景对比度 + AA/AAA 达标 + 实时预览 |
@@ -71,6 +71,16 @@ npx serve .
 - 所有状态消息带 `aria-live`，复制操作有可视反馈
 
 ## 📝 更新日志
+
+### v1.6 · 2026-10-06（音乐解锁大扩展）
+
+- **格式支持从 3 种扩展到 30+ 种**：
+  - 酷狗：KGM/KGMA/VPR（加密版本 v2 + v3，v3 纯算法派生**无大小限制**）+ **KGG**（需上传酷狗客户端的密钥数据库 db，在浏览器内 AES-CBC 逐页解密 SQLite 提取密钥，不上传）
+  - QQ 音乐：QMC0/2/3/4/6/8、QMCFLAC/OGG/MP3、TKM、BKC*（Moo）、微云 hex 后缀、MMP4；QMCv2 全家（MFLAC/MGG 及数字后缀变体，TEA 派生密钥 + Map/RC4 双密码本，按文件尾标 QTag/rawLen 自动识别）
+  - 网易云：NCM（AES-ECB 密钥 + keyBox 流，**自动用内嵌元数据重命名输出为「歌手 - 歌名.格式」**）
+- 验证：unlock-music 官方测试向量（RC4/Map/Static × mflac0/mflac/mgg 全组合）**逐字节一致**；NCM/KGM v3 合成往返验证通过
+- 修复过程中发现的关键问题：WebCrypto 无 AES-ECB——用「CBC 链 + 伪造合法 padding 尾块」技巧实现无 padding ECB 解密；TEA 采用 Go x/crypto 的 16 循环 BigEndian 语义
+- 注意：KGM 老加密（v2 掩码表）仍受约 104MB 物理限制（掩码表覆盖范围），此类超大文件建议用新版酷狗重新下载（v3 格式无此限制）
 
 ### v1.5 · 2026-10-06（导航重设计 + 全工具增强，约 100 项优化）
 
