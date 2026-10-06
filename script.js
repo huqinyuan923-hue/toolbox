@@ -155,12 +155,15 @@ addEventListener("scroll", () => {
 const jsonInput = $("#jsonInput");
 const jsonMsg = $("#jsonMsg");
 
-/** 递归排序对象键 */
+/** 递归排序对象键（基于 entries 重构，无动态键访问） */
 function sortKeysDeep(v) {
   if (Array.isArray(v)) return v.map(sortKeysDeep);
   if (v && typeof v === "object") {
     return Object.fromEntries(
-      Object.keys(v).sort().map((k) => [k, sortKeysDeep(v[k])]));
+      Object.entries(v)
+        .sort(([a], [b]) => (a < b ? -1 : a > b ? 1 : 0))
+        .map(([k, val]) => [k, sortKeysDeep(val)])
+    );
   }
   return v;
 }
