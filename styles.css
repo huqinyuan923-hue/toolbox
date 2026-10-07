@@ -248,8 +248,10 @@ textarea:focus, input:focus, select:focus, .btn:focus-visible, .tool-btn:focus-v
 
 @media (max-width: 640px) {
   .grid-2, .md-grid { grid-template-columns: 1fr; }
-  .header-inner { padding: 8px 12px; gap: 8px; }
-  .brand { font-size: 0.98rem; }
+  .header-inner { flex-direction: column; align-items: stretch; padding: 8px 12px; gap: 8px; }
+  .brand { font-size: 0.98rem; align-self: flex-start; }
+  .tool-nav { order: 2; }
+  #toolSearch { width: 100%; flex: 1; }
 }
 
 /* 动画弱化偏好 */
